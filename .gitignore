@@ -1,0 +1,6 @@
+*.o
+*~
+*.tar
+*.tar.gz
+*.tar.bz2
+*.tgz
