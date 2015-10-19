@@ -50,18 +50,18 @@ SDL_Surface* display_image(SDL_Surface *img) {
     errx(1, "Couldn't set %dx%d video mode: %s\n",
          img->w, img->h, SDL_GetError());
   }
- 
-  /* Blit onto the screen surface */
+
+   /* Blit onto the screen surface */
   if(SDL_BlitSurface(img, NULL, screen, NULL) < 0)
     warnx("BlitSurface error: %s\n", SDL_GetError());
- 
-  // Update the screen
+
+   // Update the screen
   SDL_UpdateRect(screen, 0, 0, img->w, img->h);
- 
-  // wait for a key
+
+   // wait for a key
   wait_for_keypressed();
- 
-  // return the screen for further uses
+
+   // return the screen for further uses
   return screen;
 }
 
@@ -89,7 +89,7 @@ return display_image(img);
 }
 
 
-SDL_Surface* contraste_level (SDL_Surface *img)
+SDL_Surface* contrast_level (SDL_Surface *img)
 {
   Uint8 r,g,b;
   Uint32 pixel1;
@@ -102,47 +102,50 @@ SDL_Surface* contraste_level (SDL_Surface *img)
 	  SDL_GetRGB(pixel1,img->format,&r,&g,&b);
 	  pixel2 = SDL_MapRGB(img->format,255-r,255-r,255-r);
 	  putpixel(img,i,j,pixel2);
-	  
 	}
     }
   return img;
 }
 
-Uint32 image_test (SDL_Surface *img,int x,int y)
+Uint32 image_test (SDL_Surface *img,unsigned x,unsigned  y, Uint32 *tab)
 {
-  if(x<0 || y<0)
-    {
-      return 0;
-    }
-  else
-    {     
-     return getpixel(img,x,y)+image_test(img,x-1,y)+image_test(img,x,y-1)- image_test(img,x-1,y-1);
-    }
+  if(x ==0 && y ==0)
+    return getpixel(img,x,y);
+  if (y = 0)
+    return getpixel(img,x,0) + *(tab + x-1);
+  if (x = 0)
+    return getpixel(img,0,y) + *(tab + (y-1)* img-> h);
+  Uint32 up = *(tab + x + (y-1)*img->h);
+  Uint32 left = *(tab + (x-1) + y*img->h);
+  Uint32 up_left = *(tab + (x-1) + (y-1)*img->h);
+  return getpixel(img,x,y)+ up + left - up_left;
+
   // putpixel(img,x,y,pixel);
 }
 
 
-SDL_Surface* image_integrale (SDL_Surface *img)
+Uint32* image_integrale (SDL_Surface *img)
 {
   Uint32 pixel;
-int i,j;
- for (i = 0; i < img->w ; i++) 
-{
-  for (j=0; j < img->h; j++) 
+  size_t x,y;
+  Uint32 *image = calloc(img->w*img->h, sizeof(Uint32));
+  for (y = 0; y < img->h; y++)
   {
-    pixel =image_test(img,i,j);
-    putpixel(img,i,j,pixel);
+    for (x=0; x < img->w; x++)
+    {
+      pixel =image_test(img,w,y, image);
+      *(image + x + y * img->h) = pixel;
+    }
   }
-}
- return img;
+    return image;
 }
 
 int main(int argc, char *argv[])
 {
   printf("%d",argc);
   grey(argv[1]);
-  display_image((contraste_level(load_image(argv[argc-1]))));
-   display_image(image_integrale(load_image(argv[argc-1])));
+  display_image((contrast_level(load_image(argv[argc-1]))));
+  display_image(image_integrale(load_image(argv[argc-1])));
   return 0;
 }
 
