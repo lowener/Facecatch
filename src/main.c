@@ -65,27 +65,19 @@ SDL_Surface* display_image(SDL_Surface *img) {
   return screen;
 }
 
-SDL_Surface* grey(char *path){
-  SDL_Surface *img = load_image(path);
+void grey(SDL_Surface *img){
   Uint8 r,g,b;
   Uint32 pixel;
   int i,j;
-for (i = 0; i < img->w ; i++) {
-
-  for (j=0; j < img->h; j++) {
-
-    pixel = getpixel(img,i,j);
-    SDL_GetRGB(pixel,img->format,&r,&g,&b);
-    r = g= b= 0.3*r+0.59*g+0.11*b;
-    pixel= SDL_MapRGB(img->format,r,g,b);
-    putpixel(img,i,j,pixel);
-
+  for (i = 0; i < img->w ; i++) {
+    for (j=0; j < img->h; j++) {
+      pixel = getpixel(img,i,j);
+      SDL_GetRGB(pixel,img->format,&r,&g,&b);
+      r = g= b= 0.3*r+0.59*g+0.11*b;
+      pixel= SDL_MapRGB(img->format,r,g,b);
+      putpixel(img,i,j,pixel);
+    }
   }
-
-
-}
-return display_image(img);
-
 }
 
 
@@ -107,13 +99,13 @@ SDL_Surface* contrast_level (SDL_Surface *img)
   return img;
 }
 
-Uint32 image_test (SDL_Surface *img,unsigned x,unsigned  y, Uint32 *tab)
+Uint32 image_test (SDL_Surface *img, int x, int  y, Uint32 *tab)
 {
   if(x ==0 && y ==0)
     return getpixel(img,x,y);
-  if (y = 0)
+  if (y == 0)
     return getpixel(img,x,0) + *(tab + x-1);
-  if (x = 0)
+  if (x == 0)
     return getpixel(img,0,y) + *(tab + (y-1)* img-> h);
   Uint32 up = *(tab + x + (y-1)*img->h);
   Uint32 left = *(tab + (x-1) + y*img->h);
@@ -127,13 +119,13 @@ Uint32 image_test (SDL_Surface *img,unsigned x,unsigned  y, Uint32 *tab)
 Uint32* image_integrale (SDL_Surface *img)
 {
   Uint32 pixel;
-  size_t x,y;
-  Uint32 *image = calloc(img->w*img->h, sizeof(Uint32));
+  int x,y;
+  Uint32 *image = calloc(img->w*img->h, sizeof(Uint32));//see manual for calloc
   for (y = 0; y < img->h; y++)
   {
     for (x=0; x < img->w; x++)
     {
-      pixel =image_test(img,w,y, image);
+      pixel =image_test(img,x,y, image);
       *(image + x + y * img->h) = pixel;
     }
   }
@@ -142,10 +134,12 @@ Uint32* image_integrale (SDL_Surface *img)
 
 int main(int argc, char *argv[])
 {
-  printf("%d",argc);
-  grey(argv[1]);
+  SDL_Surface *my_img = load_image(argv[1]);
+  display_image(my_img);
+  grey(my_img);
+  display_image(my_img);
   display_image((contrast_level(load_image(argv[argc-1]))));
-  display_image(image_integrale(load_image(argv[argc-1])));
+  image_integrale(load_image(argv[argc-1]));
   return 0;
 }
 
