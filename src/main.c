@@ -108,13 +108,41 @@ SDL_Surface* contraste_level (SDL_Surface *img)
   return img;
 }
 
+Uint32 image_test (SDL_Surface *img,int x,int y)
+{
+  if(x<0 || y<0)
+    {
+      return 0;
+    }
+  else
+    {     
+     return getpixel(img,x,y)+image_test(img,x-1,y)+image_test(img,x,y-1)- image_test(img,x-1,y-1);
+    }
+  // putpixel(img,x,y,pixel);
+}
 
+
+SDL_Surface* image_integrale (SDL_Surface *img)
+{
+  Uint32 pixel;
+int i,j;
+ for (i = 0; i < img->w ; i++) 
+{
+  for (j=0; j < img->h; j++) 
+  {
+    pixel =image_test(img,i,j);
+    putpixel(img,i,j,pixel);
+  }
+}
+ return img;
+}
 
 int main(int argc, char *argv[])
 {
   printf("%d",argc);
   grey(argv[1]);
   display_image((contraste_level(load_image(argv[argc-1]))));
+   display_image(image_integrale(load_image(argv[argc-1])));
   return 0;
 }
 
