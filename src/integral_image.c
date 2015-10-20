@@ -7,7 +7,7 @@
  *}
 */
 
-Uint32 *image_test (SDL_Surface *img, int x, int  y, Uint32 *tab)
+Uint32 image_test (SDL_Surface *img, int x, int  y, Uint32 *tab)
 {
   if(x ==0 && y ==0)
     return getpixel(img,x,y);
@@ -39,7 +39,7 @@ Uint32* image_integrale (SDL_Surface *img)
       *(int_img + x + y * img->w) = image_test(img,x,y, int_img);
     }
   }
-    return image;
+    return int_img;
 }
 
 /* integral_region
