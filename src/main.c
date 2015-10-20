@@ -3,8 +3,8 @@
 #include <SDL/SDL.h>
 #include <SDL/SDL_image.h>
 #include <err.h>
-# include "pixel_operations.h"
-
+#include "pixel_operations.h"
+#include "integral_image.h"
 void wait_for_keypressed(void) {
   SDL_Event             event;
   // Infinite loop, waiting for event
@@ -97,39 +97,6 @@ SDL_Surface* contrast_level (SDL_Surface *img)
 	}
     }
   return img;
-}
-
-Uint32 image_test (SDL_Surface *img, int x, int  y, Uint32 *tab)
-{
-  if(x ==0 && y ==0)
-    return getpixel(img,x,y);
-  if (y == 0)
-    return getpixel(img,x,0) + *(tab + x-1);
-  if (x == 0)
-    return getpixel(img,0,y) + *(tab + (y-1)* img-> h);
-  Uint32 up = *(tab + x + (y-1)*img->h);
-  Uint32 left = *(tab + (x-1) + y*img->h);
-  Uint32 up_left = *(tab + (x-1) + (y-1)*img->h);
-  return getpixel(img,x,y)+ up + left - up_left;
-
-  // putpixel(img,x,y,pixel);
-}
-
-
-Uint32* image_integrale (SDL_Surface *img)
-{
-  Uint32 pixel;
-  int x,y;
-  Uint32 *image = calloc(img->w*img->h, sizeof(Uint32));//see manual for calloc
-  for (y = 0; y < img->h; y++)
-  {
-    for (x=0; x < img->w; x++)
-    {
-      pixel =image_test(img,x,y, image);
-      *(image + x + y * img->h) = pixel;
-    }
-  }
-    return image;
 }
 
 int main(int argc, char *argv[])
