@@ -5,6 +5,7 @@
 #include <err.h>
 #include "pixel_operations.h"
 #include "integral_image.h"
+
 void wait_for_keypressed(void) {
   SDL_Event             event;
   // Infinite loop, waiting for event
@@ -27,7 +28,7 @@ void init_sdl(void) {
     // If it fails, die with an error message
     errx(1,"Could not initialize SDL: %s.\n", SDL_GetError());
   }
- 
+
   // We don't really need a function for that ...
 }
 
@@ -110,7 +111,7 @@ int test_overflow(Uint64 *integ, SDL_Surface *img)
   printf("### TEST OVERFLOW : ###\n");
   while (i < img->w && !overflow)
   {
-    Uint64 x = *(integ + i + img->h - 1 * img->w);
+    Uint64 x = *(integ + i + (img->h - 1) * img->w);
     printf("i = %i, val = %lu\n", i, x);
     if (x < prev)
       overflow = 1;
