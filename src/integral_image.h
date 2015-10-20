@@ -8,8 +8,9 @@
 #include <err.h>
 #include "pixel_operations.h"
 
-Uint32 image_test (SDL_Surface *img, int x, int  y, Uint32 *tab);
-Uint32* image_integrale (SDL_Surface *img);
+Uint64 image_test (SDL_Surface *img, int x, int  y, Uint64 *tab);
+Uint64* image_integrale (SDL_Surface *img);
+int haar_f1 (Uint64 *int_img, SDL_Surface *img, int x, int y);
 
 
 

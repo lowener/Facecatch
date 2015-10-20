@@ -99,6 +99,30 @@ SDL_Surface* contrast_level (SDL_Surface *img)
   return img;
 }
 
+/* This function test if the integral image overflow at some point
+ *  on the Uint64 type
+ */
+int test_overflow(Uint64 *integ, SDL_Surface *img)
+{
+  int overflow = 0;
+  int i = 1;
+  Uint64 prev = 0;
+  printf("### TEST OVERFLOW : ###\n");
+  while (i < img->w && !overflow)
+  {
+    Uint64 x = *(integ + i + img->h - 1 * img->w);
+    printf("i = %i, val = %lu\n", i, x);
+    if (x < prev)
+      overflow = 1;
+    prev = x;
+    i++;
+  }
+  if (overflow)
+    printf("OVERFLOW !\n");
+  return overflow;
+}
+
+
 int main(int argc, char *argv[])
 {
   SDL_Surface *my_img = load_image(argv[1]);
@@ -106,7 +130,17 @@ int main(int argc, char *argv[])
   grey(my_img);
   display_image(my_img);
   display_image((contrast_level(load_image(argv[argc-1]))));
-  image_integrale(load_image(argv[argc-1]));
+  Uint64 *integ = image_integrale(load_image(argv[argc-1]));
+
+  //int x = my_img->w -1;
+  //int y = my_img->h -1;
+  //printf("%lu\n", *(integ + x + y * my_img->w));
+  test_overflow(integ, my_img);
+
+  haar_f1(integ, my_img, 30, 30);
+  SDL_FreeSurface(my_img);
+  free(integ);
+  printf("all good...\n");
   return 0;
 }
 
