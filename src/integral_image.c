@@ -10,15 +10,15 @@
 Uint64 image_test (SDL_Surface *img, int x, int  y, Uint64 *tab)
 {
   if(x ==0 && y ==0)
-    return getpixel(img,x,y);
+    return getpixel(img,x,y) & 0xFF;
   if (y == 0)
-    return getpixel(img,x,0) + *(tab + x-1);
+    return (getpixel(img,x,0) & 0xFF) + *(tab + x-1);
   if (x == 0)
-    return getpixel(img,0,y) + *(tab + (y-1)* img-> w);
+    return (getpixel(img,0,y) & 0xFF) + *(tab + (y-1)* img-> w);
   Uint64 up = *(tab + x + (y-1)*img->w);
   Uint64 left = *(tab + (x-1) + y*img->w);
   Uint64 up_left = *(tab + (x-1) + (y-1)*img->w);
-  return ((Uint64)getpixel(img,x,y)+ up + left - up_left);
+  return ((Uint64)getpixel(img,x,y) & 0xFF)+ up + left - up_left;
 
   // putpixel(img,x,y,pixel);
 }
@@ -63,12 +63,11 @@ Uint64 integral_region(Uint64 *int_img, int img_width, int up_left_X,
  * coordinates (x,y) correspond to down right pixel of the haar feature area
  */
 int haar_f1 (Uint64 *int_img, SDL_Surface *img, int x, int y)
-{	
+{
   if (x < 23 || y < 23)
     errx(1, "haar feature 1 is out of the image's dimensions");
   Uint64 integ_left = integral_region(int_img, img->w, x-23, y-23, x-12, y);
-  Uint64 integ_right = integral_region(int_img, img->w, x-11, y-23, x, y); 
-
+  Uint64 integ_right = integral_region(int_img, img->w, x-11, y-23, x, y);
   Uint64 threshold = (integ_left + integ_right)/2;
 
   if (integ_left > threshold && integ_right < threshold)

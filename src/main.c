@@ -5,6 +5,7 @@
 #include <err.h>
 #include "pixel_operations.h"
 #include "integral_image.h"
+
 void wait_for_keypressed(void) {
   SDL_Event             event;
   // Infinite loop, waiting for event
@@ -27,7 +28,7 @@ void init_sdl(void) {
     // If it fails, die with an error message
     errx(1,"Could not initialize SDL: %s.\n", SDL_GetError());
   }
- 
+
   // We don't really need a function for that ...
 }
 
@@ -110,7 +111,7 @@ int test_overflow(Uint64 *integ, SDL_Surface *img)
   printf("### TEST OVERFLOW : ###\n");
   while (i < img->w && !overflow)
   {
-    Uint64 x = *(integ + i + img->h - 1 * img->w);
+    Uint64 x = *(integ + i + (img->h - 1) * img->w);
     printf("i = %i, val = %lu\n", i, x);
     if (x < prev)
       overflow = 1;
@@ -125,12 +126,19 @@ int test_overflow(Uint64 *integ, SDL_Surface *img)
 
 int main(int argc, char *argv[])
 {
+  if (argc == 1)
+  {
+    printf("Where is your image?\n");
+    return 1;
+  }
   SDL_Surface *my_img = load_image(argv[1]);
+  if (!my_img)
+    return 1;
   display_image(my_img);
   grey(my_img);
   display_image(my_img);
-  display_image((contrast_level(load_image(argv[argc-1]))));
-  Uint64 *integ = image_integrale(load_image(argv[argc-1]));
+  display_image((contrast_level(load_image(argv[1]))));
+  Uint64 *integ = image_integrale(load_image(argv[1]));
 
   //int x = my_img->w -1;
   //int y = my_img->h -1;
