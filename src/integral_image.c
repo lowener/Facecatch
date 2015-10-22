@@ -76,5 +76,10 @@ int haar_f1 (Uint64 *int_img, SDL_Surface *img, int x, int y)
     return 0;
 }
 
-
-
+int haar_f2(Uint64 *int_img, SDL_Surface *img, int x, int y){
+ Uint64 S1 = integral_region(int_img,img->w,x-23,y-23,x-1,y-1);
+ Uint64 S2 = integral_region(int_img,img->w,x-23,y,x-1,y+24-1);
+ Uint64 S3 = integral_region(int_img,img->w,x-23,y+23,x-1,y+2*24-1);
+ return (S1-S2+S3);
+ 
+}
