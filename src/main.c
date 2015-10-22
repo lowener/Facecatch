@@ -126,12 +126,19 @@ int test_overflow(Uint64 *integ, SDL_Surface *img)
 
 int main(int argc, char *argv[])
 {
+  if (argc == 1)
+  {
+    printf("Where is your image?\n");
+    return 1;
+  }
   SDL_Surface *my_img = load_image(argv[1]);
+  if (!my_img)
+    return 1;
   display_image(my_img);
   grey(my_img);
   display_image(my_img);
-  display_image((contrast_level(load_image(argv[argc-1]))));
-  Uint64 *integ = image_integrale(load_image(argv[argc-1]));
+  display_image((contrast_level(load_image(argv[1]))));
+  Uint64 *integ = image_integrale(load_image(argv[1]));
 
   //int x = my_img->w -1;
   //int y = my_img->h -1;

@@ -10,15 +10,15 @@
 Uint64 image_test (SDL_Surface *img, int x, int  y, Uint64 *tab)
 {
   if(x ==0 && y ==0)
-    return getpixel(img,x,y);
+    return getpixel(img,x,y) & 0xFF;
   if (y == 0)
-    return getpixel(img,x,0) + *(tab + x-1);
+    return (getpixel(img,x,0) & 0xFF) + *(tab + x-1);
   if (x == 0)
-    return getpixel(img,0,y) + *(tab + (y-1)* img-> w);
+    return (getpixel(img,0,y) & 0xFF) + *(tab + (y-1)* img-> w);
   Uint64 up = *(tab + x + (y-1)*img->w);
   Uint64 left = *(tab + (x-1) + y*img->w);
   Uint64 up_left = *(tab + (x-1) + (y-1)*img->w);
-  return ((Uint64)getpixel(img,x,y)+ up + left - up_left);
+  return ((Uint64)getpixel(img,x,y) & 0xFF)+ up + left - up_left;
 
   // putpixel(img,x,y,pixel);
 }
