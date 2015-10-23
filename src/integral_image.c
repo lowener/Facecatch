@@ -61,7 +61,7 @@ Uint64 integral_region(Uint64 *int_img, int img_width, int up_left_X,
  * Takes as parameter the image that you want to compute
  * Return a pointer to an array with the integral image
  * Use this pointer with *(ptr + x + y * Width)
- /* haar features number 1
+ * haar features number 1
  * Check if the region of 24*24 pixels match the haar features 1
  * coordinates (x,y) correspond to down right pixel of the haar feature area
  */
@@ -80,9 +80,35 @@ int haar_f1 (Uint64 *int_img, SDL_Surface *img, int x, int y)
 }
 
 int haar_f2(Uint64 *int_img, SDL_Surface *img, int x, int y){
- Uint64 S1 = integral_region(int_img,img->w,x-23,y-23,x-1,y-1);
- Uint64 S2 = integral_region(int_img,img->w,x-23,y,x-1,y+24-1);
- Uint64 S3 = integral_region(int_img,img->w,x-23,y+23,x-1,y+2*24-1);
+ Uint64 S1 = integral_region(int_img,img->w,x-23,y-23,x,y);
+ Uint64 S2 = integral_region(int_img,img->w,x-23,y,x,y+24);
+ Uint64 S3 = integral_region(int_img,img->w,x-23,y+23,x,y+2*24);
  return (S1-S2+S3);
- 
+
 }
+
+int haar_f3(Uint64 *int_img,SDL_Surface *img, int x, int y){
+  Uint64 S1 = integral_region(int_img,img->w,x-23,y-23,x,y);
+  Uint64 S2 = integral_region(int_img,img->w,x,y-23,x+24,y);
+  return S1-S2;
+}
+
+int haar_f4(Uint64 * int_img,SDL_Surface *img,int x,int y){
+  Uint64 S1 = integral_region(int_img,img->w,x-23,y-23,x,y);
+  Uint64 S2 = integral_region(int_img,img->w,x,y-23,x+24,y);
+  Uint64 S3 = integral_region(int_img,img->w,x+24,y-23,x+2*24,y);
+ return S1-S2+S3;
+}
+
+int haar_f5(Uint64 *int_img,SDL_Surface *img, int x,int y){
+  Uint64 S1 = integral_region(int_img,img->w,x-23,y-23,x,y);
+  Uint64 S2 = integral_region(int_img,img->w,x,y-23,x+24,y);
+  Uint64 S3 = integral_region(int_img,img->w,x-23,y,x,y+24);
+  Uint64 S4 = integral_region(int_img,img->w,x,y,x+24,y+24);
+  return S1-S2-S3+S4;
+}
+
+
+
+
+
