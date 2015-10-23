@@ -3,7 +3,8 @@
 #include <SDL/SDL.h>
 #include <SDL/SDL_image.h>
 #include <err.h>
-# include "pixel_operations.h"
+#include "pixel_operations.h"
+#include "integral_image.h"
 
 void wait_for_keypressed(void) {
   SDL_Event             event;
@@ -27,7 +28,7 @@ void init_sdl(void) {
     // If it fails, die with an error message
     errx(1,"Could not initialize SDL: %s.\n", SDL_GetError());
   }
- 
+
   // We don't really need a function for that ...
 }
 
@@ -102,6 +103,29 @@ SDL_Surface* contrast_level (SDL_Surface *img)
   return img;
 }
 
+/* This function test if the integral image overflow at some point
+ *  on the Uint64 type
+ */
+int test_overflow(Uint64 *integ, SDL_Surface *img)
+{
+  int overflow = 0;
+  int i = 1;
+  Uint64 prev = 0;
+  printf("### TEST OVERFLOW : ###\n");
+  while (i < img->w && !overflow)
+  {
+    Uint64 x = *(integ + i + (img->h - 1) * img->w);
+    printf("i = %i, val = %lu\n", i, x);
+    if (x < prev)
+      overflow = 1;
+    prev = x;
+    i++;
+  }
+  if (overflow)
+    printf("OVERFLOW !\n");
+  return overflow;
+}
+ 
 void image_test (Uint32 *tab1,size_t w, int x, int  y, Uint32 *tab2)
 {
   if(x ==0 && y ==0){
@@ -143,17 +167,46 @@ Uint32* image_integrale (Uint32 *tab,size_t w,size_t h)
     {
       image_test(tab,w,x,y,image);
     }
-  }
-    return image;
 }
-
-
-
+return image;
+}
+/* This function test if the integral image overflow at some point
+ *  on the Uint64 type
+ */
+/*int test_overflow(Uint64 *integ, SDL_Surface *img)
+{
+  int overflow = 0;
+  int i = 1;
+  Uint64 prev = 0;
+  printf("### TEST OVERFLOW : ###\n");
+  while (i < img->w && !overflow)
+  {
+    Uint64 x = *(integ + i + (img->h - 1) * img->w);
+    printf("i = %i, val = %lu\n", i, x);
+    if (x < prev)
+      overflow = 1;
+    prev = x;
+    i++;
+  }
+  if (overflow)
+    printf("OVERFLOW !\n");
+  return overflow;
+}
+*/
 
 int main(int argc, char *argv[])
 { 
+  if (argc == 1)
+  {
+    printf("Where is your image?\n");
+    return 1;
+  }
+
   SDL_Surface *my_img = load_image(argv[1]);
+  if (!my_img)
+    return 1;
   display_image(my_img);
+  display_image((contrast_level(load_image(argv[1]))));
   Uint32* powney = malloc(sizeof(Uint32)*my_img->w*my_img->h);
   grey(my_img,powney);
   print_U32t(powney,my_img->w,my_img->h);
@@ -161,6 +214,21 @@ int main(int argc, char *argv[])
   printf("\n---------------------------------\n");
   print_U32t(poney,my_img->w,my_img->h);
   return argc;
+  //grey(my_img);
+  //display_image(my_img);
+  //display_image((contrast_level(load_image(argv[1]))));
+  //Uint64 *integ = image_integrale(load_image(argv[1]));
+
+  //int x = my_img->w -1;
+  //int y = my_img->h -1;
+  //printf("%lu\n", *(integ + x + y * my_img->w));
+  //test_overflow(integ, my_img);
+  // powney => greyscale picture, poney => integ picture 
+  //haar_f1(integ, my_img, 30, 30); haar must be applied on the Uint32 tab called poney
+  //SDL_FreeSurface(my_img);
+  //free(integ);
+  //printf("all good...\n");
+  //return 0;
 }
 
 
