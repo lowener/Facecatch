@@ -126,50 +126,6 @@ int test_overflow(Uint64 *integ, SDL_Surface *img)
   return overflow;
 }
  
-void image_test (Uint32 *tab1,size_t w, int x, int  y, Uint32 *tab2)
-{
-  if(x ==0 && y ==0){
-    *(tab2+x+y*w) = *(tab1 + x + y*w); // getpixel(img,x,y);
-    return ;
-    }
-  if (y == 0){
-    *(tab2+ x) = *(tab1 + x) + *(tab2 + x-1);//getpixel(img,x,0) + *(tab2 + x-1);
-    return ;
-    }
-  if (x == 0){
-    *(tab2 + x + y*w) = *(tab1 + y *w)+ *(tab2 + (y-1)*w); // getpixel(img,0,y) + *(tab + (y-1)* img-> h);
-    return  ;
-    }
-  Uint32 up = *(tab2 + x + (y-1)*w);
-  Uint32 left = *(tab2 + (x-1) + y*w);
-  Uint32 up_left = *(tab2 + (x-1) + (y-1)*w);
-  *(tab2 + x +y*w) = *(tab1 + x + y*w)+up+left - up_left; // getpixel(img,x,y)+ up + left - up_left;
-
-  // putpixel(img,x,y,pixel);
-}
-
-void print_U32t(Uint32 *tab,size_t w,size_t h){
-  size_t x,y;
-  for (y = 0; y < h; y++){
-    for (x=0; x <w; x++)
-      printf(" %6u ",tab[x+y*w]);
-    printf("\n");
-  }
-}
-
-Uint32* image_integrale (Uint32 *tab,size_t w,size_t h)
-{
-  size_t x,y;
-  Uint32 *image = calloc(w*h, sizeof(Uint32));//see manual for calloc
-  for (y = 0; y < h; y++)
-  {
-    for (x=0; x <w; x++)
-    {
-      image_test(tab,w,x,y,image);
-    }
-}
-return image;
-}
 /* This function test if the integral image overflow at some point
  *  on the Uint64 type
  */
@@ -193,6 +149,18 @@ return image;
   return overflow;
 }
 */
+
+
+void print_U32t(Uint32 *tab,size_t w,size_t h){
+  size_t x,y;
+  for (y = 0; y < h; y++){
+    for (x=0; x <w; x++)
+      printf(" %6u ",tab[x+y*w]);
+    printf("\n");
+  }
+}
+
+
 
 int main(int argc, char *argv[])
 { 

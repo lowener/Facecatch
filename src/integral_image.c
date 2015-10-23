@@ -7,49 +7,47 @@
  *}
  */
 
-Uint64 image_test (SDL_Surface *img, int x, int  y, Uint64 *tab)
+
+
+void image_test (Uint32 *tab1,size_t w, int x, int  y, Uint32 *tab2)
 {
-  if(x ==0 && y ==0)
-    return getpixel(img,x,y) & 0xFF;
-  if (y == 0)
-    return (getpixel(img,x,0) & 0xFF) + *(tab + x-1);
-  if (x == 0)
-    return (getpixel(img,0,y) & 0xFF) + *(tab + (y-1)* img-> w);
-  Uint64 up = *(tab + x + (y-1)*img->w);
-  Uint64 left = *(tab + (x-1) + y*img->w);
-  Uint64 up_left = *(tab + (x-1) + (y-1)*img->w);
-  return ((Uint64)getpixel(img,x,y) & 0xFF)+ up + left - up_left;
+  if(x ==0 && y ==0){
+    *(tab2+x+y*w) = *(tab1 + x + y*w); // getpixel(img,x,y);
+    return ;
+  }
+  if (y == 0){
+    *(tab2+ x) = *(tab1 + x) + *(tab2 + x-1);//getpixel(img,x,0) + *(tab2 + x-1);
+    return ;
+  }
+  if (x == 0){
+    *(tab2 + x + y*w) = *(tab1 + y *w)+ *(tab2 + (y-1)*w); // getpixel(img,0,y) + *(tab + (y-1)* img-> h);
+    return  ;
+  }
+  Uint32 up = *(tab2 + x + (y-1)*w);
+  Uint32 left = *(tab2 + (x-1) + y*w);
+  Uint32 up_left = *(tab2 + (x-1) + (y-1)*w);
+  *(tab2 + x +y*w) = *(tab1 + x + y*w)+up+left - up_left; // getpixel(img,x,y)+ up + left - up_left;
 
   // putpixel(img,x,y,pixel);
 }
 
-/* integral_image
- * Takes as parameter the image that you want to compute
- * Return a pointer to an array with the integral image
- * Use this pointer with *(ptr + x + y * Width)
- */
-Uint64* image_integrale (SDL_Surface *img)
+
+Uint32* image_integrale (Uint32 *tab,size_t w,size_t h)
 {
-  int x,y;
-  Uint64 *int_img=calloc(img->w*img->h,sizeof(Uint64));//see manual for calloc
-  for (y = 0; y < img->h; y++)
-  {
-    for (x=0; x < img->w; x++)
+  size_t x,y;
+  Uint32 *image = calloc(w*h, sizeof(Uint32));//see manual for calloc
+  for (y = 0; y < h; y++)
     {
-      *(int_img + x + y * img->w) = image_test(img,x,y, int_img);
+      for (x=0; x <w; x++)
+	{
+	  image_test(tab,w,x,y,image);
+	}
     }
-  }
-  return int_img;
+  return image;
 }
 
-/* integral_region
- * Takes in parameter the integral image, it's width
- * and the position in the arrray of the up_left section (X and Y)
- * and of the down_right section.
- * Return the integral number of the region.
- */
 Uint64 integral_region(Uint64 *int_img, int img_width, int up_left_X,
-		int up_left_Y, int down_right_X, int down_right_Y)
+                int up_left_Y, int down_right_X, int down_right_Y)
 {
   Uint64 up = *(int_img + down_right_X + up_left_Y * img_width);
   Uint64 left = *(int_img + up_left_X + down_right_Y * img_width);
@@ -57,8 +55,13 @@ Uint64 integral_region(Uint64 *int_img, int img_width, int up_left_X,
   Uint64 down_right = *(int_img + down_right_X + down_right_Y * img_width);
   return up_left + down_right - (up + left);
 }
+ 
 
-/* haar features number 1
+/* integral_image
+ * Takes as parameter the image that you want to compute
+ * Return a pointer to an array with the integral image
+ * Use this pointer with *(ptr + x + y * Width)
+ /* haar features number 1
  * Check if the region of 24*24 pixels match the haar features 1
  * coordinates (x,y) correspond to down right pixel of the haar feature area
  */
