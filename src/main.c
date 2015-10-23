@@ -65,17 +65,20 @@ SDL_Surface* display_image(SDL_Surface *img) {
   return screen;
 }
 
-void grey(SDL_Surface *img){
+void grey(SDL_Surface *img,Uint32 *tab){
   Uint8 r,g,b;
   Uint32 pixel;
   int i,j;
+  Uint32 sum;
   for (i = 0; i < img->w ; i++) {
     for (j=0; j < img->h; j++) {
       pixel = getpixel(img,i,j);
       SDL_GetRGB(pixel,img->format,&r,&g,&b);
-      r = g= b= 0.3*r+0.59*g+0.11*b;
-      pixel= SDL_MapRGB(img->format,r,g,b);
-      putpixel(img,i,j,pixel);
+      sum= 0.3*r+0.59*g+0.11*b;
+      *(tab + i + img->w * j) = sum;
+      // i = x and j = y
+      // pixel= SDL_MapRGB(img->format,r,g,b);
+      //putpixel(img,i,j,pixel);
     }
   }
 }
@@ -99,47 +102,65 @@ SDL_Surface* contrast_level (SDL_Surface *img)
   return img;
 }
 
-Uint32 image_test (SDL_Surface *img, int x, int  y, Uint32 *tab)
+void image_test (Uint32 *tab1,size_t w, int x, int  y, Uint32 *tab2)
 {
-  if(x ==0 && y ==0)
-    return getpixel(img,x,y);
-  if (y == 0)
-    return getpixel(img,x,0) + *(tab + x-1);
-  if (x == 0)
-    return getpixel(img,0,y) + *(tab + (y-1)* img-> h);
-  Uint32 up = *(tab + x + (y-1)*img->h);
-  Uint32 left = *(tab + (x-1) + y*img->h);
-  Uint32 up_left = *(tab + (x-1) + (y-1)*img->h);
-  return getpixel(img,x,y)+ up + left - up_left;
+  if(x ==0 && y ==0){
+    *(tab2+x+y*w) = *(tab1 + x + y*w); // getpixel(img,x,y);
+    return ;
+    }
+  if (y == 0){
+    *(tab2+ x) = *(tab1 + x) + *(tab2 + x-1);//getpixel(img,x,0) + *(tab2 + x-1);
+    return ;
+    }
+  if (x == 0){
+    *(tab2 + x + y*w) = *(tab1 + y *w)+ *(tab2 + (y-1)*w); // getpixel(img,0,y) + *(tab + (y-1)* img-> h);
+    return  ;
+    }
+  Uint32 up = *(tab2 + x + (y-1)*w);
+  Uint32 left = *(tab2 + (x-1) + y*w);
+  Uint32 up_left = *(tab2 + (x-1) + (y-1)*w);
+  *(tab2 + x +y*w) = *(tab1 + x + y*w)+up+left - up_left; // getpixel(img,x,y)+ up + left - up_left;
 
   // putpixel(img,x,y,pixel);
 }
 
+void print_U32t(Uint32 *tab,size_t w,size_t h){
+  size_t x,y;
+  for (y = 0; y < h; y++){
+    for (x=0; x <w; x++)
+      printf(" %6u ",tab[x+y*w]);
+    printf("\n");
+  }
+}
 
-Uint32* image_integrale (SDL_Surface *img)
+Uint32* image_integrale (Uint32 *tab,size_t w,size_t h)
 {
-  Uint32 pixel;
-  int x,y;
-  Uint32 *image = calloc(img->w*img->h, sizeof(Uint32));//see manual for calloc
-  for (y = 0; y < img->h; y++)
+  size_t x,y;
+  Uint32 *image = calloc(w*h, sizeof(Uint32));//see manual for calloc
+  for (y = 0; y < h; y++)
   {
-    for (x=0; x < img->w; x++)
+    for (x=0; x <w; x++)
     {
-      pixel =image_test(img,x,y, image);
-      *(image + x + y * img->h) = pixel;
+      image_test(tab,w,x,y,image);
     }
   }
     return image;
 }
 
+
+
+
 int main(int argc, char *argv[])
-{
+{ 
   SDL_Surface *my_img = load_image(argv[1]);
   display_image(my_img);
-  grey(my_img);
-  display_image(my_img);
-  display_image((contrast_level(load_image(argv[argc-1]))));
-  image_integrale(load_image(argv[argc-1]));
-  return 0;
+  Uint32* powney = malloc(sizeof(Uint32)*my_img->w*my_img->h);
+  grey(my_img,powney);
+  print_U32t(powney,my_img->w,my_img->h);
+  Uint32* poney = image_integrale(powney,my_img->w,my_img->h);
+  printf("\n---------------------------------\n");
+  print_U32t(poney,my_img->w,my_img->h);
+  return argc;
 }
+
 
