@@ -8,10 +8,10 @@
 #include <err.h>
 #include "pixel_operations.h"
 
-void image_test (Uint32 *tab1, size_t w, int  x,int y, Uint32 *tab2);
-Uint32* image_integrale (Uint32 *tab,size_t w, size_t h);
-int haar_f1 (Uint64 *int_img, SDL_Surface *img, int x, int y);
-
+void compute_integral (Uint32 *tab1, size_t w, int  x,int y, Uint32 *tab2);
+Uint32* image_integral (Uint32 *tab,size_t w, size_t h);
+Uint32 integral_region(Uint32 *int_img, size_t img_width, int up_left_X,
+                       int up_left_Y, int down_right_X, int down_right_Y);
 
 
 #endif /* !INTEGRAL_IMAGE_H_ */

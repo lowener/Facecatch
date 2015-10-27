@@ -5,6 +5,7 @@
 #include <err.h>
 #include "pixel_operations.h"
 #include "integral_image.h"
+#include "haar_features.h"
 
 void wait_for_keypressed(void) {
   SDL_Event             event;
@@ -125,30 +126,8 @@ int test_overflow(Uint64 *integ, SDL_Surface *img)
     printf("OVERFLOW !\n");
   return overflow;
 }
- 
-/* This function test if the integral image overflow at some point
- *  on the Uint64 type
- */
-/*int test_overflow(Uint64 *integ, SDL_Surface *img)
-{
-  int overflow = 0;
-  int i = 1;
-  Uint64 prev = 0;
-  printf("### TEST OVERFLOW : ###\n");
-  while (i < img->w && !overflow)
-  {
-    Uint64 x = *(integ + i + (img->h - 1) * img->w);
-    printf("i = %i, val = %lu\n", i, x);
-    if (x < prev)
-      overflow = 1;
-    prev = x;
-    i++;
-  }
-  if (overflow)
-    printf("OVERFLOW !\n");
-  return overflow;
-}
-*/
+
+
 
 
 void print_U32t(Uint32 *tab,size_t w,size_t h){
@@ -163,7 +142,7 @@ void print_U32t(Uint32 *tab,size_t w,size_t h){
 
 
 int main(int argc, char *argv[])
-{ 
+{
   if (argc == 1)
   {
     printf("Where is your image?\n");
@@ -175,28 +154,18 @@ int main(int argc, char *argv[])
     return 1;
   display_image(my_img);
   display_image((contrast_level(load_image(argv[1]))));
-  Uint32* powney = malloc(sizeof(Uint32)*my_img->w*my_img->h);
-  grey(my_img,powney);
-  print_U32t(powney,my_img->w,my_img->h);
-  Uint32* poney = image_integrale(powney,my_img->w,my_img->h);
-  printf("\n---------------------------------\n");
-  print_U32t(poney,my_img->w,my_img->h);
-  return argc;
-  //grey(my_img);
-  //display_image(my_img);
-  //display_image((contrast_level(load_image(argv[1]))));
-  //Uint64 *integ = image_integrale(load_image(argv[1]));
-
-  //int x = my_img->w -1;
-  //int y = my_img->h -1;
-  //printf("%lu\n", *(integ + x + y * my_img->w));
-  //test_overflow(integ, my_img);
-  // powney => greyscale picture, poney => integ picture 
-  //haar_f1(integ, my_img, 30, 30); haar must be applied on the Uint32 tab called poney
-  //SDL_FreeSurface(my_img);
-  //free(integ);
-  //printf("all good...\n");
-  //return 0;
+  Uint32* grey_array = malloc(sizeof(Uint32)*my_img->w*my_img->h);
+  grey(my_img,grey_array);
+  //print_U32t(grey_array,my_img->w,my_img->h);
+  Uint32* integ_array = image_integral(grey_array,my_img->w,my_img->h);
+  //printf("\n---------------------------------\n");
+  //print_U32t(integ_array,my_img->w,my_img->h);
+  feature *haar = haar_features( integ_array, my_img, 0,1);
+  free(grey_array);
+  free(integ_array);
+  free(haar);
+  SDL_FreeSurface(my_img);
+  return 0;
 }
 
 
