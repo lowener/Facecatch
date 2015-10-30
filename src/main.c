@@ -160,10 +160,10 @@ int main(int argc, char *argv[])
   Uint32* integ_array = image_integral(grey_array,my_img->w,my_img->h);
   //printf("\n---------------------------------\n");
   //print_U32t(integ_array,my_img->w,my_img->h);
-  feature *haar = haar_features( integ_array, my_img, 0,1);
+  //feature *haar = compute_haar( integ_array, my_img);
   free(grey_array);
   free(integ_array);
-  free(haar);
+  //free(haar);
   SDL_FreeSurface(my_img);
   return 0;
 }
