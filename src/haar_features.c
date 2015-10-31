@@ -30,21 +30,21 @@ void build_feat(feature *feat, int type, int i, int j, int w, int h, int res)
  * Result: Array of array of Haar features
  */
 
-/*feature* compute_haar(Uint32 *int_img, SDL_Surface *img)
- *{
- *  feature *array_feat = calloc(img->w * img-> h, sizeof(feature));
- *int size = 0;
- *for (int y = 0; y < img->h; y++) {
- *  for (int x = 0; x < img->w; x++) {
- *    *(array_feat + size) = *haar_features(int_img, img, x,y);
- *    size++;
- *    printf("%d/%d\n",size,img->w*img->h);
- *  }
- *}
- *
- *return array_feat;
- *}
-*/
+feature* compute_haar(Uint32 *int_img, SDL_Surface *img)
+{
+  feature *array_feat = calloc(img->w * img-> h, sizeof(feature));
+ int size = 0;
+ for (int y = 0; y < img->h; y++) {
+   for (int x = 0; x < img->w; x++) {
+     *(array_feat + size) = *haar_features(int_img, img, x,y);
+     size++;
+     printf("%d/%d\n",size,img->w*img->h);
+   }
+ }
+ 
+ return array_feat;
+}
+
 
 /* haar_features
  * Parameters: feature array, integral image, image, position x and y of the 24x24 area
@@ -58,17 +58,17 @@ feature* haar_features(Uint32 *int_img, SDL_Surface *img, int x, int y)
   feature *array_feat = calloc(162400, sizeof(feature));
   feature *current = malloc(sizeof(feature));
   int index_array = 0;
-//  printf("ok ...\n");
+  //printf("ok ...\n");
   index_array = haar_f1(int_img,img->w,array_feat,current,index_array,x,y);
-//  printf("Haar 1: %d features\n",index_array);
+  //printf("Haar 1: %d features\n",index_array);
   index_array = haar_f2(int_img,img->w,array_feat,current,index_array,x,y);
-//  printf("Haar 2: %d features\n",index_array);
+  //printf("Haar 2: %d features\n",index_array);
   index_array = haar_f3(int_img,img->w,array_feat,current,index_array,x,y);
-//  printf("Haar 3: %d features\n",index_array);
+  //printf("Haar 3: %d features\n",index_array);
   index_array = haar_f4(int_img,img->w,array_feat,current,index_array,x,y);
-//  printf("Haar 4: %d features\n",index_array);
+  //printf("Haar 4: %d features\n",index_array);
   index_array = haar_f5(int_img,img->w,array_feat,current,index_array,x,y);
-//  printf("Haar 5: %d features\n",index_array);
+  //printf("Haar 5: %d features\n",index_array);
   free(current);
   return array_feat;
 }

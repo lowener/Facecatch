@@ -59,7 +59,7 @@ int main(int argc, char *argv[])
   if (!my_img)
     return 1;
   display_image(my_img);
-  display_image((contrast_level(load_image(argv[1]))));
+  //display_image((contrast_level(load_image(argv[1]))));
   Uint32* grey_array = malloc(sizeof(Uint32)*my_img->w*my_img->h);
   grey(my_img,grey_array);
   //print_U32t(grey_array,my_img->w,my_img->h);
@@ -71,9 +71,8 @@ int main(int argc, char *argv[])
   free(integ_array);
   //free(haar);
   SDL_FreeSurface(my_img);
-  feature* f = malloc(sizeof(feature));
-  f->type = 8;
-  test_feature(f);
+  feature** database = init_db(2);
+  free(database);
   return 0;
 }
 
