@@ -1,16 +1,16 @@
 #ifndef HAAR_FEATURES_H_
 #define HAAR_FEATURES_H_
 
-typedef struct S_feature feature;
+//typedef struct S_feature feature;
 
-struct  S_feature{
+typedef struct feature{
     int type;
     int i;
     int j;
     int w;
     int h;
     int res;
-} S_feature;
+} feature;
 
 void build_feat(feature *feat, int type, int i, int j, int w, int h, int res);
 
