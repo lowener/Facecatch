@@ -59,21 +59,22 @@ int main(int argc, char *argv[])
   if (!my_img)
     return 1;
   display_image(my_img);
-  display_image((contrast_level(load_image(argv[1]))));
+  //display_image((contrast_level(load_image(argv[1]))));
   Uint32* grey_array = malloc(sizeof(Uint32)*my_img->w*my_img->h);
   grey(my_img,grey_array);
   //print_U32t(grey_array,my_img->w,my_img->h);
   Uint32* integ_array = image_integral(grey_array,my_img->w,my_img->h);
   //printf("\n---------------------------------\n");
   //print_U32t(integ_array,my_img->w,my_img->h);
-  //feature *haar = compute_haar( integ_array, my_img);
+  feature *haar = compute_haar( integ_array, my_img);
   free(grey_array);
   free(integ_array);
-  //free(haar);
+  free(haar);
   SDL_FreeSurface(my_img);
   feature* f = malloc(sizeof(feature));
   f->type = 8;
-  test_feature(f);
+  //test_feature(f);
+  free(f);
   return 0;
 }
 
