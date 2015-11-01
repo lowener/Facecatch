@@ -5,23 +5,23 @@
 #include "integral_image.h"
 #include "haar_features.h"
 
- /* haar features
-  * Check if the region of 24*24 pixels match the haar features 1
-  * coordinates (x,y) correspond to down right pixel of the haar feature area
-  */
+/* haar features
+ * Check if the region of 24*24 pixels match the haar features 1
+ * coordinates (x,y) correspond to down right pixel of the haar feature area
+ */
 
 
 
 void build_feat(feature *feat, int type, int i, int j, int w, int h, int res)
 {
-//  printf("build\n");
+
   feat->type = type;
-  feat->i = i;
-  feat->j = j;
+  feat->i = j; // Everything is under control
+  feat->j = i; 
   feat->w = w;
   feat->h = h;
   feat->res = res;
-//  printf("build OK\n");
+
 }
 
 /* compute_haar
@@ -41,7 +41,7 @@ feature* compute_haar(Uint32 *int_img, SDL_Surface *img)
      printf("%d/%d\n",size,img->w*img->h);
    }
  }
- 
+
  return array_feat;
 }
 

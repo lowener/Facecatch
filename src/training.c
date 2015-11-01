@@ -45,6 +45,16 @@ feature** init_db(int nb_img)
 }
 
 
+feature *extract(classifier *c, int nb)
+{
+  feature *result = malloc(sizeof(feature));
+  *result = c->feats[nb];
+  for (int i = nb; i < c->length - 1; i++) {
+    c->feats[i] = c->feats[i + 1];
+  }
+  c->length--;
+  return result;
+}
 
 
 
