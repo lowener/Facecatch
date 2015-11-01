@@ -47,14 +47,16 @@ void print_U32t(Uint32 *tab,size_t w,size_t h){
 
 
 
-int main(int argc, char *argv[])
+int main(/*int argc, char *argv[]*/)
 {
+  
+  /*
   if (argc == 1)
   {
     printf("Where is your image?\n");
     return 1;
   }
-
+  
   SDL_Surface *my_img = load_image(argv[1]);
   if (!my_img)
     return 1;
@@ -71,29 +73,20 @@ int main(int argc, char *argv[])
   free(integ_array);
   //free(haar);
   SDL_FreeSurface(my_img);
-  feature** database = init_db(178);
-  //feature* variance = compute_variance(database, 178);
-  /*
-  int comptpos = 0;
-  for(int x = 0; x < 1000; x++)
-  {
-    printf("res(%i) = %i ; x = %i ; y = %i ; w = %i ; h = %i\n", x, database[0][x].res, database[0][x].i, database[0][x].j, database[0][x].w, database[0][x].h);
-    if (database[0][x].res == 0)
-       comptpos++;
-  }
-  printf("nb0 = %i\n", comptpos);
-  
-  feature* weights = get_weights(database,178);
-
-  for(int i = 0; i < 1000; i++)
-  {
-    printf("w(%i) = %i\n",i ,weights[i].res); 
-  }
-  free(weights);
   */
-  //free(variance);
+  feature** database = init_db(178);
+  
+  classifier* k = get_important_feats(database, 178);
+
+  //print important features
+  for(int i = 0; i < k->length; i++)
+  {
+    printf("f(%i,%i): type = %i ; nb_match = %i ; w = %i ; h = %i\n",k->feats[i].i,k->feats[i].j, k->feats[i].type, k->feats[i].nb_match, k->feats[i].w, k->feats[i].h);
+  }
+  printf("%i elements in classifier\n", k->length);
+  
+  free(k->feats);
+  free(k);
   free(database);
   return 0;
 }
-
-

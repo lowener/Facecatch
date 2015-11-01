@@ -45,16 +45,16 @@ feature** init_db(int nb_img)
 }
 
 
-/*
+
 
 classifier* get_important_feats(feature** database, int nb_img)
 {
-  feature* nb_match = malloc(162336*sizeof(feature));
-
-  //initialize nb_match at value 1
+  feature* feats = malloc(162336*sizeof(feature));
+  feats = database[0];
+  //initialize nb_match at values 0
   for(int i = 0; i < 162336; i++)
   {
-    nb_match.res = 0;   
+    feats[i].nb_match = 0;   
   }
     
   //calculating nb_match
@@ -62,16 +62,50 @@ classifier* get_important_feats(feature** database, int nb_img)
   {
     for(int j = 0; j < nb_img; j++)
     { 
-      if(database[j][i].res > 0)
-        nb_match.res++;
+      if(database[j][i].res > 0 && database[j][i].w != 1 && 
+      database[j][i].h != 1)
+        feats[i].nb_match++;
     }
   }
-  classifier* c;
-  return c;
   
+  //compting and marking useless features by putting -1 in nb_match
+  int nb_useless = 0;
+  for(int i = 0; i < 162336; i++)
+  {
+    if (feats[i].nb_match < (nb_img/2))
+    {
+      feats[i].nb_match = -1;
+      nb_useless++;
+    }
+  }
+  //creating final list
+  feature* important_feats = malloc((162336-nb_useless)*sizeof(feature));
+  
+  //adding important features to the final list
+  int pos = 0;
+  for(int i = 0; i < 162336; i++)
+  {
+    if(feats[i].nb_match != -1)
+    {
+      important_feats[pos] = feats[i];
+      pos++;      
+    }
+  }
+  
+  free(feats);
+  classifier* k = malloc(sizeof(classifier));
+  k -> feats = important_feats;
+  k -> length = pos;
+
+  if((162336 - nb_useless) != pos)
+    printf("error : nb_useless = %i ; pos = %i ; 162336 - nb_useless = %i\n", nb_useless, pos, 162336 - nb_useless);
+  else
+    printf("important features extracted...\n");
+
+  return k;    
 }
 
-*/
+
 
 
 

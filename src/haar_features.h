@@ -10,12 +10,13 @@ typedef struct feature{
   int w;
   int h;
   int res;
+  int nb_match;
   //float var;
 }feature;
 
 typedef struct classifier{
   feature* feats; //array of features
-  size_t length;
+  int length;
 }classifier;
 
 
