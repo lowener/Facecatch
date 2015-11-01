@@ -6,4 +6,4 @@
 *.tgz
 perso/*
 main
-#*#
+./#*
