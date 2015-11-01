@@ -71,7 +71,13 @@ int main(int argc, char *argv[])
   free(integ_array);
   //free(haar);
   SDL_FreeSurface(my_img);
-  feature** database = init_db(2);
+  feature** database = init_db(178);
+  feature* variance = compute_variance(database, 178);
+  for(int x = 0; x < 1000; x++)
+  {
+    printf("variance(%i) = %i ; width = %i ; height = %i ; calc = %i\n", x, variance[x].res, variance[x].w, variance[x].h, variance[x].res/(variance[x].w + variance[x].h));
+  }
+  free(variance);
   free(database);
   return 0;
 }

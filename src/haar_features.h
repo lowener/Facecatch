@@ -10,6 +10,7 @@ typedef struct feature{
     int w;
     int h;
     int res;
+    float var;
 } feature;
 
 void build_feat(feature *feat, int type, int i, int j, int w, int h, int res);

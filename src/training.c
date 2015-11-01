@@ -27,7 +27,7 @@ feature** init_db(int nb_img)
     puts(path);
 
     SDL_Surface *img = load_image(path);
-    display_image(img);
+    //display_image(img);
     Uint32* grey_img = malloc(sizeof(Uint32)*img->w*img->h);
     grey(img, grey_img);
     Uint32* int_img = image_integral(grey_img, img->w, img->h);
