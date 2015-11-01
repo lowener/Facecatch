@@ -49,7 +49,7 @@ feature** init_db(int nb_img)
  * Harmonize the weight of the image
  * Return the new Vector of weight
  */
-feature *harmonize(float[] weight_vect, int[] modif_array, int nbimg)
+float *harmonize(float weight_vect[], int modif_array[], int nbimg)
 {
   int index = 0;
   int nbmodif = 0;
@@ -63,12 +63,10 @@ feature *harmonize(float[] weight_vect, int[] modif_array, int nbimg)
   float sum = 1 + pas * nbmodif;
   float new_total_weight = 1/sum;
   for (index = 0; index < nbimg && nbmodif; index++) {
-    if (modif_array[index] == 1) {
-      weight_vect[index] = weight_vect * new_total_weight;
-      nbmodif--;
-    }
+    weight_vect[index] = weight_vect[index] * new_total_weight;
+    nbmodif--;
   }
-  return weight_vect;
+    return weight_vect;
 }
 /*
 
