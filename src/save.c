@@ -6,84 +6,96 @@
 
 void write (feature feat,FILE* fichier)
 {
- fprintf(fichier,"%d ",feat.type);
+  fprintf(fichier,"%d ",feat.type);
   fprintf(fichier,"%d ",feat.i);
   fprintf(fichier,"%d ",feat.j);
   fprintf(fichier,"%d ",feat.w);
   fprintf(fichier,"%d ",feat.h);
   fprintf(fichier,"%d\n",feat.res);
- 
+
 }
 
 void write_vector(feature *begin,size_t len, char *path)
 {
   FILE* fichier = NULL;
   fichier = fopen(path, "w");
-if (fichier!= NULL) {
-  for(size_t i =0; (i) < len; i++)
+  if (fichier!= NULL) {
+    for(size_t i =0; (i) < len; i++)
     {
       write(*(i+begin),fichier);
     }
   fclose(fichier);
-}else {
-  printf("impossible d'ouvrir le fichier %s\n",path );
-}
+  }else {
+    printf("impossible d'ouvrir le fichier %s\n",path );
+  }
 }
 
 feature* read(char *path, size_t nbfeature ){
-
-FILE* fichier = NULL;
+  
+  FILE* fichier = NULL;
   fichier = fopen(path,"r");
-
-  if(fichier!=NULL){
+  if (fichier!=NULL)
+  {
     rewind(fichier);
     char cur;
-    char* number="";
     size_t nbspace = 0, i =0;
-    int tmp=0;
-    feature *tab = calloc(nbfeature,sizeof(feature)) ;
-    do{
+    int tmp =0;
+    printf("%zu\n",sizeof(feature) );
+    feature *tab = calloc(nbfeature,sizeof(feature));
+    printf("allocation done\n");
+    feature *current= malloc(sizeof(feature));
+    printf("tempory allocation done\n");
 
-       do{
-          cur = fgetc(fichier);
-          if (cur == ' '){
-            tmp = atoi(number);
+    do{
+      do{
+        cur = fgetc(fichier);
+ if (cur == ' '|| cur == '\n'){
             switch (nbspace) {
               case 0: {
-                ((tab+i)->type)= tmp;
+                (current->type)= tmp;
+//printf("add types : %i\n",tmp );
                 break;
               }
               case 1: {
-                ((tab+i)->i) = tmp;
+                (current->i) = tmp;
+//printf("add i: %i\n", tmp);
                 break;
               }
               case 2: {
-                ((tab+i)->j) = tmp;
+                (current->j) = tmp;
+//printf("add j: %i\n", tmp);
                 break;
               }
               case 3: {
-                ((tab+i)->w) = tmp;
+                (current->w) = tmp;
+//printf("add w: %i\n", tmp);
                 break;
               }
               case 4: {
-                ((tab+i)->h) = tmp;
+                (current->h) = tmp;
+//printf("add h: %i\n", tmp);
                 break;
               }
               case 5:{
-                ((tab+i)->res) = tmp;
+                (current->res) = tmp;
+//printf("add res: %i\n", tmp);
                 break;
               }
               default:
                 break;
             }
             nbspace++;
-            number =0;
+            tmp=0;
           }else {
-            number += cur;
+            tmp *=10;
+            tmp+=(cur%48);
           }
-        }while(cur != '\n');
-       i++;
-    } while (i<=nbfeature && cur != EOF);
+      }while(cur != '\n');
+      *(tab+i)= *current;
+      printf("%zu\n",i);
+      i++;
+    } while (i<nbfeature && cur != EOF);
+    free(current);
     return tab;
   }else {
     return NULL;
