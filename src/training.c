@@ -43,8 +43,33 @@ feature** init_db(int nb_img)
   printf("n2, w = %i ; h = %i ; res = %i\n", database[0][250].w, database[0][250].h, database[0][250].res);
   return database;
 }
-
-
+/* harmonize
+ * As parameters: Vector of the weight of the image,
+ *                vector of the modification(0/1), nb img
+ * Harmonize the weight of the image
+ * Return the new Vector of weight
+ */
+feature *harmonize(float[] weight_vect, int[] modif_array, int nbimg)
+{
+  int index = 0;
+  int nbmodif = 0;
+  float pas = 5/nbimg;
+  for (index = 0; index < nbimg; index++) {
+    if (modif_array[index] == 1) {
+      weight_vect[index] += pas;
+      nbmodif++;
+    }
+  }
+  float sum = 1 + pas * nbmodif;
+  float new_total_weight = 1/sum;
+  for (index = 0; index < nbimg && nbmodif; index++) {
+    if (modif_array[index] == 1) {
+      weight_vect[index] = weight_vect * new_total_weight;
+      nbmodif--;
+    }
+  }
+  return weight_vect;
+}
 /*
 
 classifier* get_important_feats(feature** database, int nb_img)
