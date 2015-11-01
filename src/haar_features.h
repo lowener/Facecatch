@@ -4,14 +4,20 @@
 //typedef struct S_feature feature;
 
 typedef struct feature{
-    int type;
-    int i;
-    int j;
-    int w;
-    int h;
-    int res;
-    float var;
-} feature;
+  int type;
+  int i;
+  int j;
+  int w;
+  int h;
+  int res;
+  //float var;
+}feature;
+
+typedef struct classifier{
+  feature* feats; //array of features
+  size_t length;
+}classifier;
+
 
 void build_feat(feature *feat, int type, int i, int j, int w, int h, int res);
 

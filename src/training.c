@@ -39,10 +39,41 @@ feature** init_db(int nb_img)
   }
 
 
-  printf("n1, w = %i ; h = %i ; res = %i\n", database[0]->w, database[0]->h, database[0]->res);
+  printf("n1, w = %i ; h = %i ; res = %i\n", database[10][250].w, database[10][250].h, database[10][250].res);
   printf("n2, w = %i ; h = %i ; res = %i\n", database[0][250].w, database[0][250].h, database[0][250].res);
   return database;
 }
+
+
+/*
+
+classifier* get_important_feats(feature** database, int nb_img)
+{
+  feature* nb_match = malloc(162336*sizeof(feature));
+
+  //initialize nb_match at value 1
+  for(int i = 0; i < 162336; i++)
+  {
+    nb_match.res = 0;   
+  }
+    
+  //calculating nb_match
+  for(int i = 0; i < 162336; i++)
+  {
+    for(int j = 0; j < nb_img; j++)
+    { 
+      if(database[j][i].res > 0)
+        nb_match.res++;
+    }
+  }
+  classifier* c;
+  return c;
+  
+}
+
+*/
+
+
 
 
 
@@ -89,7 +120,7 @@ int test_feature(feature* feat)
   free(int_img);
   return haar_value;
 }
-*/
+
 
 
 feature* compute_variance(feature** db, int nbimg)
@@ -113,3 +144,5 @@ feature* compute_variance(feature** db, int nbimg)
   }
   return result;
 }
+
+*/
