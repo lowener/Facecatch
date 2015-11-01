@@ -4,6 +4,8 @@
 
 feature** init_db(int nb_img);
 
+float *harmonize(float weight_vect[], int modif_array[], int nbimg);
+
 feature* get_weights(feature** database, int nb_img);
 
 classifier* get_important_feats(feature** database, int nb_img);
