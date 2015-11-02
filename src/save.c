@@ -31,7 +31,7 @@ void write_vector(feature *begin,size_t len, char *path)
 }
 
 feature* read(char *path, size_t nbfeature ){
-  
+
   FILE* fichier = NULL;
   fichier = fopen(path,"r");
   if (fichier!=NULL)

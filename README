@@ -1,0 +1,15 @@
+This program is a work in progress.
+This is the current version for the 1st soutenance.
+
+* To compile it you have to use
+make
+
+* To execute it you have to use
+./main
+
+* To remove all the compiled files you have to use
+make clean
+
+This program loads 178 positive images of 24*24 pixels in order to train itself.
+It calculates the integral image, the haar features and makes the first strong
+classifier.

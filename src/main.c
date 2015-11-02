@@ -49,14 +49,52 @@ void print_U32t(Uint32 *tab,size_t w,size_t h){
 
 int main(/*int argc, char *argv[]*/)
 {
-  
+
+  feature** database = init_db(178);
+
+  for (int i = 0; i < 10; i++) {
+    feature *f = &database[42][i];
+    printf(" Haar-feat n°%d | x: %5d | y: %5d | h: %5d | w: %5d | Score: %6d |\n"
+           ,i,f->i, f->j, f->h, f->w, f->res);
+  }
+
+
+  classifier* k = get_important_feats(database, 178);
+
+  for (int i = 0; i < 10; i++) {
+    feature *f = &(k->feats[42+i]);
+    printf(" Haar-feat n°%d | x: %5d | y: %5d | h: %5d | w: %5d | Score: %6d |\n"
+           ,i,f->i, f->j, f->h, f->w, f->res);
+  }
+
+  classifier* new_k = generate_new_classifier(database, k, 300, 178);
+
+  printf("%i elements in classifier\n", new_k->length);
+
+
+  for (int i = 0; i < 10; i++) {
+    feature *f = &(new_k->feats[42+i]);
+    printf(" Strong classifier n°%d | x: %5d | y: %5d | h: %5d | w: %5d | Score: %6d |\n"
+           ,i, f->i, f->j, f->h, f->w, f->res);
+  }
+
+
+  free(new_k->feats);
+  free(new_k);
+  free(k->feats);
+  free(k);
+  free(database);
+  return 0;
+}
+
+
   /*
   if (argc == 1)
   {
     printf("Where is your image?\n");
     return 1;
   }
-  
+
   SDL_Surface *my_img = load_image(argv[1]);
   if (!my_img)
     return 1;
@@ -74,26 +112,3 @@ int main(/*int argc, char *argv[]*/)
   //free(haar);
   SDL_FreeSurface(my_img);
   */
-  feature** database = init_db(178); 
-   
-  classifier* k = get_important_feats(database, 178);
-  
-  classifier* new_k = generate_new_classifier(database, k, 300, 178);
-
-
-  //print new features
-  for(int i = 0; i < new_k->length; i++)
-  {
-    printf("f(%i,%i): type = %i ; nb_match = %i ; w = %i ; h = %i\n",new_k->feats[i].i,k->feats[i].j, new_k->feats[i].type, new_k->feats[i].nb_match, new_k->feats[i].w, new_k->feats[i].h);
-  }
-  printf("%i elements in classifier\n", new_k->length);
-  
-
-
-  free(new_k->feats);
-  free(new_k);
-  free(k->feats);
-  free(k);
-  free(database);
-  return 0;
-}

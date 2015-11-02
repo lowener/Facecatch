@@ -12,7 +12,8 @@ feature* get_weights(feature** database, int nb_img);
 
 classifier* get_important_feats(feature** database, int nb_img);
 
-classifier* generate_new_classifier(feature** database, classifier* old_k, int nb_features, int nb_img);
+classifier* generate_new_classifier(feature** database, classifier* old_k,
+                                    int nb_features, int nb_img);
 
 //feature* compute_variance(feature** db, int nbimg);
 
