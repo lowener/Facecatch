@@ -74,17 +74,24 @@ int main(/*int argc, char *argv[]*/)
   //free(haar);
   SDL_FreeSurface(my_img);
   */
-  feature** database = init_db(178);
-  
+  feature** database = init_db(178); 
+   
   classifier* k = get_important_feats(database, 178);
-
-  //print important features
-  for(int i = 0; i < k->length; i++)
-  {
-    printf("f(%i,%i): type = %i ; nb_match = %i ; w = %i ; h = %i\n",k->feats[i].i,k->feats[i].j, k->feats[i].type, k->feats[i].nb_match, k->feats[i].w, k->feats[i].h);
-  }
-  printf("%i elements in classifier\n", k->length);
   
+  classifier* new_k = generate_new_classifier(database, k, 300, 178);
+
+
+  //print new features
+  for(int i = 0; i < new_k->length; i++)
+  {
+    printf("f(%i,%i): type = %i ; nb_match = %i ; w = %i ; h = %i\n",new_k->feats[i].i,k->feats[i].j, new_k->feats[i].type, new_k->feats[i].nb_match, new_k->feats[i].w, new_k->feats[i].h);
+  }
+  printf("%i elements in classifier\n", new_k->length);
+  
+
+
+  free(new_k->feats);
+  free(new_k);
   free(k->feats);
   free(k);
   free(database);

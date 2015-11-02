@@ -14,14 +14,15 @@
 
 void build_feat(feature *feat, int type, int i, int j, int w, int h, int res)
 {
-
+static int index = 0;
   feat->type = type;
   feat->i = j; // Everything is under control
   feat->j = i; 
   feat->w = w;
   feat->h = h;
   feat->res = res;
-
+  feat->index = index;
+  index = (index + 1)%162336;
 }
 
 /* compute_haar
@@ -55,7 +56,7 @@ feature* compute_haar(Uint32 *int_img, SDL_Surface *img)
 
 feature* haar_features(Uint32 *int_img, SDL_Surface *img, int x, int y)
 {
-  feature *array_feat = calloc(162400, sizeof(feature));
+  feature *array_feat = calloc(162336, sizeof(feature));
   feature *current = malloc(sizeof(feature));
   int index_array = 0;
   //printf("ok ...\n");
