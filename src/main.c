@@ -78,6 +78,9 @@ int main(/*int argc, char *argv[]*/)
            ,i, f->i, f->j, f->h, f->w, f->res);
   }
 
+  for (int i =0 ; i < 178; i++) {
+    free(database[i]);
+  }
 
   free(new_k->feats);
   free(new_k);

@@ -56,7 +56,7 @@ feature* compute_haar(Uint32 *int_img, SDL_Surface *img)
  * Result: array of features
  */
 
-feature* haar_features(Uint32 *int_img, SDL_Surface *img, int x, int y)
+feature* haar_features(Uint32 *int_img, SDL_Surface *img/*)
 {
   feature *array_feat = calloc(162336, sizeof(feature));
   feature *current = malloc(sizeof(feature));

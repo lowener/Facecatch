@@ -26,16 +26,14 @@ feature** init_db(int nb_img)
     puts(path);
 
     SDL_Surface *img = load_image(path);
-    if(i == nb_img)
-      display_image(img);
     Uint32* grey_img = malloc(sizeof(Uint32)*img->w*img->h);
     grey(img, grey_img);
     Uint32* int_img = image_integral(grey_img, img->w, img->h);
 
     *(database + i - 1) = haar_features(int_img, img, 0, 0);
-
     free(grey_img);
     free(int_img);
+    kill_image(img);
   }
   printf("Total: %d images loaded\n", i-1);
   return database;
@@ -121,11 +119,8 @@ void harmonize(float weight_vect[], int modif_array[], int nbimg, float pas)
 classifier* get_important_feats(feature** database, int nb_img)
 {
   feature* feats = malloc(162336*sizeof(feature));
-  feats = database[0];
-  //initialize nb_match at values 0
-  for(int i = 0; i < 162336; i++)
-  {
-    feats[i].nb_match = 0;
+  for (int i = 0; i < 162336; i++) {
+    feats[i] = database[0][i];
   }
 
   //calculating nb_match
@@ -249,6 +244,7 @@ int nb_features, int nb_img)
  */
   write_vector(new_k->feats, new_k->length, "data/classifier.fc");
   printf("Classifier saved in data/classifier.fc\n");
+  free(weights_img);
   return new_k;
 }
 

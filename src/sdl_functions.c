@@ -42,6 +42,14 @@ SDL_Surface* load_image(char *path) {
   return img;
 }
 
+void kill_image(SDL_Surface *img)
+{
+  free(img->format);
+  free(img->pixels);
+  free(img);
+}
+
+
 SDL_Surface* display_image(SDL_Surface *img) {
   SDL_Surface          *screen;
   // Set the window to the same size as the image
