@@ -17,8 +17,9 @@ typedef struct feature{
 }feature;
 
 typedef struct classifier{
-  feature* feats; //array of features
-  int length;
+    feature* feats; //array of features
+    int length;
+    float *coef;
 }classifier;
 
 typedef struct adaboost_img{
