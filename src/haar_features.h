@@ -3,7 +3,7 @@
 
 //typedef struct S_feature feature;
 
-typedef struct feature{
+typedef struct feature{     //WEAK CLASSIFIER STRUCT
   int type;
   int i;
   int j;
@@ -13,6 +13,9 @@ typedef struct feature{
   int nb_match;
   float weight;
   int index;
+  float error;
+  int criteria;
+  float threshold;
   //float var;
 }feature;
 

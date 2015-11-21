@@ -3,6 +3,7 @@
 #include <SDL/SDL.h>
 #include <SDL/SDL_image.h>
 #include <string.h>
+//#include <math.h>
 #include "haar_features.h"
 #include "integral_image.h"
 #include "pixel_operations.h"
@@ -38,43 +39,6 @@ feature** init_db(int nb_img)
   printf("Total: %d images loaded\n", i-1);
   return database;
 }
-
-//list of features matching negative images
-/*
-feature* neg_matching features(int nb_img)
-{
-  feature** database = malloc(nb_img*162336*sizeof(feature));
-  printf("Negative Database allocated...\n");
-  printf("Filling negative database\n");
-
-  for(int i = 1; i <= nb_img; i++)
-  {
-    char path[30];
-    strcpy(path, "faces/negative(");
-    char str[5];
-    sprintf(str,"%i", i);
-    strcat(path, str);
-    strcat(path, ").bmp");
-    puts(path);
-
-    SDL_Surface *img = load_image(path);
-    //display_image(img);
-    Uint32* grey_img = malloc(sizeof(Uint32)*img->w*img->h);
-    grey(img, grey_img);
-    Uint32* int_img = image_integral(grey_img, img->w, img->h);
-
-    *(database + i - 1) = haar_features(int_img, img, 0, 0);
-
-    free(grey_img);
-    free(int_img);
-  }
-
-
-
-  return database;
-}
-*/
-
 feature *extract(classifier *c, int nb)
 {
   feature *result = malloc(sizeof(feature));
@@ -115,6 +79,15 @@ void harmonize(float weight_vect[], int modif_array[], int nbimg, float pas)
 }
 
 
+int my_sqrt(int n)
+{
+  if (n == 0)
+    return 0;
+  int y = n;
+  while(y > n/y)
+    y = (y + n/y)/2;
+  return y;
+}
 
 classifier* get_important_feats(feature** database, int nb_img)
 {
@@ -122,6 +95,31 @@ classifier* get_important_feats(feature** database, int nb_img)
   for (int i = 0; i < 162336; i++) {
     feats[i] = database[0][i];
   }
+
+  //Init criteria
+  for(int j = 0; j < 162336; j++)
+  {
+    float criteria = 0;
+    for(int i = 0; i < nb_img; i++)
+    {
+      criteria += database[i][j].res;
+    }
+    database[0][j].criteria = criteria / nb_img; 
+  }
+
+  //Init threshold
+  for(int j = 0; j < 162336; j++)
+  {
+    float threshold = 0;
+    for(int i = 0; i < nb_img; i++)
+    {
+      threshold += (database[i][j].res - database[0][j].criteria) *
+                   (database[i][j].res - database[0][j].criteria);
+    }
+    threshold = threshold / (float)(nb_img);
+    database[0][j].threshold = my_sqrt(threshold); 
+  }
+
 
   //calculating nb_match
   for(int i = 0; i < 162336; i++)
@@ -144,8 +142,6 @@ classifier* get_important_feats(feature** database, int nb_img)
       nb_useless++;
     }
   }
-
-
 
   //creating final list
   feature* important_feats = malloc((162336-nb_useless)*sizeof(feature));
@@ -179,6 +175,7 @@ classifier* get_important_feats(feature** database, int nb_img)
 
 // return the feature that match the best in classifier k
 //weights = images weights
+
 int get_best(classifier* k, float* weights)
 {
   weights[0] += 0;
@@ -204,9 +201,6 @@ This new classifier is also saved in file.
 classifier* generate_new_classifier(feature** database, classifier* old_k,
 int nb_features, int nb_img)
 {
-
-
-
   classifier* new_k = malloc(sizeof(classifier));
   new_k->feats = malloc(nb_features*sizeof(feature));
   new_k->length = nb_features;
@@ -321,3 +315,43 @@ feature* compute_variance(feature** db, int nbimg)
 }
 
 */
+
+
+
+//list of features matching negative images
+/*
+feature* neg_matching features(int nb_img)
+{
+  feature** database = malloc(nb_img*162336*sizeof(feature));
+  printf("Negative Database allocated...\n");
+  printf("Filling negative database\n");
+
+  for(int i = 1; i <= nb_img; i++)
+  {
+    char path[30];
+    strcpy(path, "faces/negative(");
+    char str[5];
+    sprintf(str,"%i", i);
+    strcat(path, str);
+    strcat(path, ").bmp");
+    puts(path);
+
+    SDL_Surface *img = load_image(path);
+    //display_image(img);
+    Uint32* grey_img = malloc(sizeof(Uint32)*img->w*img->h);
+    grey(img, grey_img);
+    Uint32* int_img = image_integral(grey_img, img->w, img->h);
+
+    *(database + i - 1) = haar_features(int_img, img, 0, 0);
+
+    free(grey_img);
+    free(int_img);
+  }
+
+
+
+  return database;
+}
+*/
+
+

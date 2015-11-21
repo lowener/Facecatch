@@ -203,11 +203,14 @@ void adaboost(feature **database, int nb_img, int nb_training_rounds,
   c->feats = malloc(sizeof(feature)*nb_training_rounds;
   c->length = nb_training_rounds;
   c->coef = malloc(sizeof(float)*nb_training_rounds);
-  for (int i = 0; i < nb_training_rounds; i++) {
+  for (int i = 0; i < nb_training_rounds; i++) 
+  {
     decision *d = best_decision(database,nb_img,distrib_poids,prob_weight_img);
     float classif_error = 0;
-    for (int j = 0; j < nb_ing; j++) {
-      if (apply_decision(database,d,j) == 1) {
+    for (int j = 0; j < nb_ing; j++) 
+    {
+      if (apply_decision(database,d,j) == 1) 
+      {
         classif_error += prob_weight_img[j];
       }
     }
@@ -216,7 +219,8 @@ void adaboost(feature **database, int nb_img, int nb_training_rounds,
     else
     {
       float alpha = 0.5*(float)log((1-(double)classif_error)/(double)classif_error);
-      for (int j = 0; j < nb_img; j++) { // Do Zt and H(x)
+      for (int j = 0; j < nb_img; j++) 
+      { // Do Zt and H(x)
 /*        float k = 0;
         if (apply_decision(database,d,j) == 1)
           k = 1/classif_error;
@@ -225,6 +229,7 @@ void adaboost(feature **database, int nb_img, int nb_training_rounds,
         distrib_poids[j] = distrib_poids[j] * (float)exp(-(double)alpha*
                                                          apply_decision(database,d,j
       }
+      
 
     }
   }
