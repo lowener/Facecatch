@@ -52,10 +52,9 @@ int main(/*int argc, char *argv[]*/)
 
   feature** database = init_db(178);
 
-  for (int i = 0; i < 10; i++) {
+  for (int i = 480; i < 500; i++) {
     feature *f = &database[42][i];
-    printf(" Haar-feat n°%d | x: %5d | y: %5d | h: %5d | w: %5d | Score: %6d |\n"
-           ,i,f->i, f->j, f->h, f->w, f->res);
+    printf("Haar-feat n°%d | x: %5d | y: %5d | h: %5d | w: %5d | res: %6d | criteria: %6d | threshold: %f | \n",i,f->i, f->j, f->h, f->w,f->res, f->criteria, f->threshold);
   }
 
 
