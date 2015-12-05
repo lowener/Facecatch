@@ -56,16 +56,16 @@ feature *sorting(feature **database, int index, int nbimg)
  *distrib_poids = y
  *prob_weight_img = w  also called expected output (0/1)
  */
-decision *decision_stump(feature *feats, int nbimg, float *distrib_poids,
+decision *decision_stump(feature *feats, int nbimg, double *distrib_poids,
                          int *prob_weight_img)
 {
   //INITIALIZATION
-  float threshold = (float)feats[0].res-1;
+  double threshold = feats[0].res-1;
   int margin = 0;
-  float error = 2;
+  double error = 2;
   int toggle = 0;
-  float nb_pos_weight_bigger = 0,nb_neg_weight_bigger = 0;
-  float nb_pos_weight_smaller = 0,nb_neg_weight_smaller = 0;
+  double nb_pos_weight_bigger = 0,nb_neg_weight_bigger = 0;
+  double nb_pos_weight_smaller = 0,nb_neg_weight_smaller = 0;
   for (int i = 0;i<nbimg;i++)
   {
     if (feats[i].res > threshold)
@@ -79,8 +79,8 @@ decision *decision_stump(feature *feats, int nbimg, float *distrib_poids,
 
   //Core program
   int j=0, MG=margin, curr_toggle;
-  float TH=threshold;
-  float pos_error, neg_error, curr_error;
+  double TH=threshold;
+  double pos_error, neg_error, curr_error;
   while (1)
   {
     pos_error = nb_pos_weight_smaller + nb_neg_weight_bigger;
@@ -123,12 +123,12 @@ decision *decision_stump(feature *feats, int nbimg, float *distrib_poids,
     }
     if (j==nbimg-1)
     {
-      TH = (float)feats[nbimg-1].res + 1;
+      TH = feats[nbimg-1].res + 1;
       MG = 0;
     }
     else
     {
-      TH = ((float)feats[j].res + (float)feats[j+1].res)/2;
+      TH = (feats[j].res + feats[j+1].res)/2;
       MG = feats[j+1].res - feats[j].res;
     }
   }
@@ -136,14 +136,14 @@ decision *decision_stump(feature *feats, int nbimg, float *distrib_poids,
   decision *d = malloc(sizeof(decision));
   d->threshold = threshold;
   d->toggle = toggle;
-  if (error < 0.000001 && toggle)
-    error = 0.000001;
+  if (error < 0 && toggle)
+    error = 0.00000001;
   d->error = error;
   d->margin = margin;
   return d;
 }
 
-decision *best_decision(feature **database, int nbimg, float *distrib_poids,
+decision *best_decision(feature **database, int nbimg, double *distrib_poids,
                         int *prob_weight_img, int *feat_selected)
 {
   decision *best = calloc(1,sizeof(decision));
@@ -198,9 +198,9 @@ strong_classif *adaboost(feature **database, int nb_img, int nb_training_rounds,
               int *prob_weight_img)
 {
   printf("\n");
-  float distrib_poids[nb_img];
+  double distrib_poids[nb_img];
   for (int i = 0; i < nb_img; i++)
-    distrib_poids[i] = 1/(float)nb_img; //weight repartition
+    distrib_poids[i] = 1/nb_img; //weight repartition
   strong_classif *sc = malloc(sizeof(strong_classif));
   sc->length = nb_training_rounds;
   sc->w = malloc(sizeof(weak_classif)*sc->length); //vector of weak classif
@@ -216,7 +216,7 @@ strong_classif *adaboost(feature **database, int nb_img, int nb_training_rounds,
 
     feat_selected[i] = d->index; //index of feat selected
     sc->w[i].d = d;
-    float classif_error = 0;
+    double classif_error = 0;
     for (int j = 0; j < nb_img; j++)
       if (apply_decision(database,d,j) == 1)
         classif_error += distrib_poids[j];
@@ -228,17 +228,17 @@ strong_classif *adaboost(feature **database, int nb_img, int nb_training_rounds,
     }
     else
     {
-      float tmp = (1-classif_error)/classif_error;
-      float alpha = 0.5*(float)log(tmp);
-      float weight_sum = 0;
+      double tmp = (1-classif_error)/classif_error;
+      double alpha = 0.5*log(tmp);
+      double weight_sum = 0;
       for (int j = 0; j < nb_img; j++)
       { //Weight update
-        float k = 0;
+        double k = 0;
         if (apply_decision(database,d,j) == 1)
           k = 1;
         else
           k =-1;
-        k=(float)exp((double)(-1 * alpha*prob_weight_img[j]*k));
+        k=exp((double)(-1 * alpha*prob_weight_img[j]*k));
         distrib_poids[j] = distrib_poids[j] * k;
         weight_sum += distrib_poids[j];
       }

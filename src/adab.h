@@ -8,12 +8,12 @@
 
 typedef struct decision {
     int toggle, margin,index;
-    float threshold,error;
+    double threshold,error;
 } decision;
 
 typedef struct weak_classif {
     decision *d; // not a vector
-    float coef;
+    double coef;
 } weak_classif;
 
 typedef struct strong_classif {
