@@ -9,12 +9,12 @@
 #include "training.h"
 #include "sdl_functions.h"
 #include "adab.h"
+#include "strong.h"
 
-
-int main(int argc, char *argv[])
+int main(/*int argc, char *argv[]*/)
 {
 
-
+    /*
   if (argc == 1)
   {
     printf("where is your image?\n");
@@ -34,7 +34,7 @@ int main(int argc, char *argv[])
   display_image(my_img);
 
   printf("ADABOOST !!\n");
-
+  */
 
   int pos_img = 178;
   int neg_img = 189;
@@ -42,8 +42,9 @@ int main(int argc, char *argv[])
   int* prob_weight = malloc(sizeof(int)*nbimg);
   feature** database = init_db(nbimg,pos_img,neg_img,prob_weight);
 
-  strong_classif *sc = adaboost(database,nbimg,40,prob_weight);
-  /*
+  //strong_classif *sc = adaboost(database,nbimg,200,prob_weight);
+ 
+    /*
   float res = 0;
   printf("\n");
   for (int j = 0; j < nbimg; j++) {
@@ -54,24 +55,79 @@ int main(int argc, char *argv[])
       else
         res +=  sc->w[i].coef;
     }
-    if (res<0)
+    if (res>0)
       printf("%3d. OUI res:%f\n",j,res);
     else
       printf("%3d. NON res.%f\n",j,res);
   }
   */
 
+
+/*
+  //ADABOOST TRAINING
   printf("Strong Classifier :\n");
+  printf("\n");
+  printf("sc->length = %i;\n", sc->length);
   for(int i = 0; i < sc->length; i++)
   {
-    printf("Feat%i : error = %f, toggle = %i, threshold = %f, index = %i, coef = %f\n",i ,sc->w[i].d->error, sc->w[i].d->toggle, sc->w[i].d->threshold, sc->w[i].d->index , sc->w[i].coef);
+    //printf(" Weak Classifier n.%i\n", i);
+    printf("sc->w[%i].coef = %lf;\n", i, sc->w[i].coef);
+    printf("sc->w[%i].d->toggle = %i;\n", i, sc->w[i].d->toggle);
+    printf("sc->w[%i].d->margin = %i;\n", i, sc->w[i].d->margin);
+    printf("sc->w[%i].d->index = %i;\n", i, sc->w[i].d->index);
+    printf("sc->w[%i].d->threshold = %lf;\n", i, sc->w[i].d->threshold);
+    printf("sc->w[%i].d->error = %lf;\n", i, sc->w[i].d->error);
+
   }
+
+*/
+  strong_classif* sc = malloc(sizeof(strong_classif));
+  sc->w = malloc(200*sizeof(weak_classif));
+  for(int i = 0; i < 200; i++)
+  {
+    sc->w[i].d = malloc(sizeof(decision));
+  }
+  load_classif(sc);
+
+  int comptpos = 0;
+  int comptneg = 0;
+ float res = 0;
+  printf("\n");
+  for (int j = 0; j < nbimg; j++) {
+    res = 0;
+    for (int i = 0; i < sc->length; i++) {
+      if (database[j][sc->w[i].d->index].res > sc->w[i].d->threshold)
+        res += -sc->w[i].coef;
+      else
+        res +=  sc->w[i].coef;
+    }
+    if (res>0)
+    {
+      printf("%3d. OUI res:%f\n",j,res);
+      if(j < pos_img)
+          comptpos++;
+    }
+    else
+    {
+      printf("%3d. NON res.%f\n",j,res);
+      if(j > pos_img)
+          comptneg++;
+    }
+  }
+
+
+    printf("--------------\n");
+    printf("%i positive detected\n", (comptpos*100)/pos_img);
+    printf("%i negative detected\n", (comptneg*100)/neg_img);
+
+
 
   //FREE DATABASE
   for (int i = 0; i < nbimg; i++) {
     free(database[i]);
   }
   free(database);
+
   return 0;
 }
 

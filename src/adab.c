@@ -200,7 +200,7 @@ strong_classif *adaboost(feature **database, int nb_img, int nb_training_rounds,
   printf("\n");
   double distrib_poids[nb_img];
   for (int i = 0; i < nb_img; i++)
-    distrib_poids[i] = 1/nb_img; //weight repartition
+    distrib_poids[i] = 1/(double)nb_img; //weight repartition
   strong_classif *sc = malloc(sizeof(strong_classif));
   sc->length = nb_training_rounds;
   sc->w = malloc(sizeof(weak_classif)*sc->length); //vector of weak classif
