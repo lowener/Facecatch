@@ -235,10 +235,11 @@ strong_classif *adaboost(feature **database, int nb_img, int nb_training_rounds,
       { //Weight update
         float k = 0;
         if (apply_decision(database,d,j) == 1)
-          k = 1/classif_error;
+          k = 1;
         else
-          k = 1/(1-classif_error);
-        distrib_poids[j] = distrib_poids[j] * 0.5 * k;
+          k =-1;
+        k=(float)exp((double)(-1 * alpha*prob_weight_img[j]*k));
+        distrib_poids[j] = distrib_poids[j] * k;
         weight_sum += distrib_poids[j];
       }
       if (weight_sum != 1)
