@@ -45,7 +45,7 @@ feature* read(char *path, size_t nbfeature ){
     printf("allocation done\n");
     feature *current= malloc(sizeof(feature));
     printf("tempory allocation done\n");
-    int sign=1;
+
     do{
       do{
         cur = fgetc(fichier);
@@ -77,7 +77,7 @@ feature* read(char *path, size_t nbfeature ){
                 break;
               }
               case 5:{
-                (current->res) = tmp*sign;
+                (current->res) = tmp;
 //printf("add res: %i\n", tmp);
                 break;
               }
@@ -86,15 +86,10 @@ feature* read(char *path, size_t nbfeature ){
             }
             nbspace++;
             tmp=0;
-            sign =1;
- }else {
-   if (cur == '-') {
-     sign = -1;
-   }else{
-     tmp *=10;
-     tmp+=(cur%48);
-   }
- }
+          }else {
+            tmp *=10;
+            tmp+=(cur%48);
+          }
       }while(cur != '\n');
       *(tab+i)= *current;
       printf("%zu\n",i);
@@ -106,21 +101,3 @@ feature* read(char *path, size_t nbfeature ){
     return NULL;
   }
 }
-/*int main()
-{
-  feature*tmp=malloc(10*sizeof(feature));
-  for (int i = 0; i < 10; i++) {
-    feature r = {1,2,2,3,4,-100,0,0,0,0,0,0};
-    *(tmp+i) = r;
-  }
-
-  write_vector(tmp,10,"test.fc");
-  feature* tab = read("test.fc",10);
-  for (int i = 0; i < 10; i++) {
-    printf(" Haar-feat n°%d | x: %5d | y: %5d | h: %5d | w: %5d | Score: %6d |\n"
-           ,(tab+i)->type,(tab+i)->i, (tab+i)->j, (tab+i)->h, (tab+i)->w, (tab+i)->res);
-  }
-  free(tmp);
-  free(tab);
-  return 0;
-}*/

@@ -3,11 +3,11 @@
 CC=gcc
 
 CPPFLAGS= `pkg-config --cflags sdl`
-CFLAGS= -Wall -Wextra -Werror -std=c99 -O3 -pedantic -g
+CFLAGS= -Wall -Wextra -Werror -std=c99 -O0 -pedantic -lm -g
 LDFLAGS=
-LDLIBS= `pkg-config --libs sdl` -lSDL_image
+LDLIBS= `pkg-config --libs sdl` -lSDL_image -lm
 
-SRC= pixel_operations.c main.c integral_image.c haar_features.c training.c sdl_functions.c save.c
+SRC= adab.c pixel_operations.c main.c integral_image.c haar_features.c training.c sdl_functions.c save.c
 OBJ= ${SRC:.c=.o}
 
 all: main

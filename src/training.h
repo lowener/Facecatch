@@ -1,9 +1,20 @@
 #ifndef TRAINING_H_
 #define TRAINING_H_
 
+#include <stdlib.h>
+#include <stdio.h>
+#include <SDL/SDL.h>
+#include <SDL/SDL_image.h>
+#include <string.h>
+#include "haar_features.h"
+#include "integral_image.h"
+#include "pixel_operations.h"
+#include <err.h>
+#include "sdl_functions.h"
+#include "save.h"
+#include <dirent.h>
 
-feature** init_db(int nb_img);
-
+feature** init_db(int nb_img, int pos_img, int neg_img, int* prob_weight_img);
 
 //feature *extract(classifier *c, int nb);
 

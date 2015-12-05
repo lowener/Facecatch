@@ -14,7 +14,7 @@
 
 void build_feat(feature *feat, int type, int i, int j, int w, int h, int res)
 {
-static int index = 0;
+  static int index = 0;
   feat->type = type;
   feat->i = j; // Everything is under control
   feat->j = i;
@@ -22,24 +22,8 @@ static int index = 0;
   feat->h = h;
   feat->res = res;
   feat->index = index;
-  feat->nb_match=0;
+  feat->weight = 1;
   index = (index + 1)%162336;
-}
-
-
-feature* haar_features(Uint32 *int_img, SDL_Surface *img, int x, int y)
-{
-  feature *array_feat = calloc(162336, sizeof(feature));
-  feature *current = malloc(sizeof(feature));
-  int index_array = 0;
-  index_array = haar_f1(int_img,img->w,array_feat,current,index_array,x,y);
-  index_array = haar_f2(int_img,img->w,array_feat,current,index_array,x,y);
-  index_array = haar_f3(int_img,img->w,array_feat,current,index_array,x,y);
-  index_array = haar_f4(int_img,img->w,array_feat,current,index_array,x,y);
-  index_array = haar_f5(int_img,img->w,array_feat,current,index_array,x,y);
-  free(current);
-
-  return array_feat;
 }
 
 
@@ -165,6 +149,52 @@ int haar_f5 (Uint32 *int_img, size_t width, feature *array_feat,
   return index_array;
 }
 
+/* compute_haar
+ * Parameters: integral image, image
+ * Compute the Haar features in the whole image by calling haar_features
+ * Result: Array of array of Haar features
+ */
+
+feature* compute_haar(Uint32 *int_img, SDL_Surface *img)
+{
+  feature *array_feat = calloc(img->w * img-> h, sizeof(feature));
+ int size = 0;
+ for (int y = 0; y < img->h; y++) {
+   for (int x = 0; x < img->w; x++) {
+     *(array_feat + size) = *haar_features(int_img, img, x,y);
+     size++;
+     printf("%d/%d\n",size,img->w*img->h);
+   }
+ }
+
+ return array_feat;
+}
+
+
+/* haar_features
+ * Parameters: feature array, integral image, image, position x and y
+ * of the 24x24 area
+ * It's calling fonction is compute_haar
+ * Compute the Haar features in the area of 24x24
+ * Result: array of features
+ */
+
+feature* haar_features(Uint32 *int_img, SDL_Surface *img, int x, int y)
+{
+  feature *array_feat = calloc(162336, sizeof(feature));
+  feature *current = malloc(sizeof(feature));
+  int index_array = 0;
+  index_array = haar_f1(int_img,img->w,array_feat,current,index_array,x,y);
+  index_array = haar_f2(int_img,img->w,array_feat,current,index_array,x,y);
+  index_array = haar_f3(int_img,img->w,array_feat,current,index_array,x,y);
+  index_array = haar_f4(int_img,img->w,array_feat,current,index_array,x,y);
+  index_array = haar_f5(int_img,img->w,array_feat,current,index_array,x,y);
+  free(current);
+
+  return array_feat;
+}
+
+
 /*
 int near(float x)
 {
@@ -280,39 +310,4 @@ void scaling(Uint32 *int_img, SDL_Surface *img, feature *arr)
     arr->res = (S1 - S2-S3+S4)*arr->type / (4*arr->w*arr->h);
   }
 }
-
-
-
- * compute_haar
- * Parameters: integral image, image
- * Compute the Haar features in the whole image by calling haar_features
- * Result: Array of array of Haar features
- 
-feature* compute_haar(Uint32 *int_img, SDL_Surface *img)
-{
-  feature *array_feat = calloc(img->w * img-> h, sizeof(feature));
- int size = 0;
- for (int y = 0; y < img->h; y++) {
-   for (int x = 0; x < img->w; x++) {
-     *(array_feat + size) = *haar_features(int_img, img, x,y);
-     size++;
-     printf("%d/%d\n",size,img->w*img->h);
-   }
- }
-
- return array_feat;
-}
-*
-
- * haar_features
- * Parameters: feature array, integral image, image, position x and y
- * of the 24x24 area
- * It's calling fonction is compute_haar
- * Compute the Haar features in the area of 24x24
- * Result: array of features
- 
-
-
-
-
 */

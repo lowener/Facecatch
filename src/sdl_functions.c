@@ -42,14 +42,6 @@ SDL_Surface* load_image(char *path) {
   return img;
 }
 
-void kill_image(SDL_Surface *img)
-{
-  free(img->format);
-  free(img->pixels);
-  free(img);
-}
-
-
 SDL_Surface* display_image(SDL_Surface *img) {
   SDL_Surface          *screen;
   // Set the window to the same size as the image
@@ -111,3 +103,20 @@ SDL_Surface* contrast_level (SDL_Surface *img)
   return img;
 }
 
+
+
+//Position (x,y) refers to the top left corner
+void draw_square(SDL_Surface *img, int x, int y, int width)
+{
+    Uint32 green = SDL_MapRGB(img->format, 0, 255, 0);
+    for(int i = 0; i < width; i++)
+    {
+        putpixel(img, x, y+i, green);
+        putpixel(img, x + width, y+i, green);
+        if(i == 0 || i == width-1)
+        {
+            for(int j = 1; j < width; j++)
+                putpixel(img, x + j, y + i, green);
+        }
+    }
+}
