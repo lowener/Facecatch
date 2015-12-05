@@ -22,7 +22,6 @@ void build_feat(feature *feat, int type, int i, int j, int w, int h, int res)
   feat->h = h;
   feat->res = res;
   feat->index = index;
-  feat->weight = 1;
   index = (index + 1)%162336;
 }
 

@@ -1,10 +1,12 @@
 #include "training.h"
 #include <string.h>
+#include <assert.h>
 
 //@params: nb_img (>0)
 feature** init_db(int nb_img, int pos_img, int neg_img, int* prob_weight_img)
 {
   feature** database = calloc(nb_img*162336,sizeof(feature));
+  assert(database);
   int i = -3;
   const char *pos = "./pos/";
   const char *neg = "./neg/";

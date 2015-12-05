@@ -1,6 +1,6 @@
 #include "adab.h"
 #include <math.h>
-
+#include <assert.h>
 
 int partition(feature *tableau, int p, int r) {
   int pivot = tableau[p].res;
@@ -228,6 +228,7 @@ strong_classif *adaboost(feature **database, int nb_img, int nb_training_rounds,
     }
     else
     {
+      assert(classif_error !=0);
       double tmp = (1-classif_error)/classif_error;
       double alpha = 0.5*log(tmp);
       double weight_sum = 0;

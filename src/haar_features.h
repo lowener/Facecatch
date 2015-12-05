@@ -10,8 +10,7 @@ typedef struct feature{
     int w;
     int h;
     int res;
-    int nb_match;
-    float weight;
+    int nbimg;
     int index;
     //float var;
 }feature;
@@ -21,12 +20,6 @@ typedef struct classifier{
     float* coef;
     int length;
 }classifier;
-
-typedef struct adaboost_img{
-  int index;
-  float weight;
-  int polarity;
-}adaboost_img;
 
 
 void build_feat(feature *feat, int type, int i, int j, int w, int h, int res);
