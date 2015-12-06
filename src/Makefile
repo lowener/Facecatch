@@ -3,7 +3,7 @@
 CC=gcc
 
 CPPFLAGS= `pkg-config --cflags sdl`
-CFLAGS= -Wall -Wextra -Werror -std=c99 -O3 -pedantic -lm -g
+CFLAGS= -Wall -Wextra -Werror -std=c99 -O0 -pedantic -lm -g
 
 LDFLAGS=
 LDLIBS= `pkg-config --libs sdl` -lSDL_image -lm
