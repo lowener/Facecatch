@@ -15,6 +15,7 @@
 void build_feat(feature *feat, int type, int i, int j, int w, int h, int res)
 {
   static int index = 0;
+  static int nbi = 0;
   feat->type = type;
   feat->i = j; // Everything is under control
   feat->j = i;
@@ -22,7 +23,10 @@ void build_feat(feature *feat, int type, int i, int j, int w, int h, int res)
   feat->h = h;
   feat->res = res;
   feat->index = index;
+  feat->nbimg = nbi;
   index = (index + 1)%162336;
+  if (!index)
+    nbi++;
 }
 
 
@@ -148,27 +152,6 @@ int haar_f5 (Uint32 *int_img, size_t width, feature *array_feat,
   return index_array;
 }
 
-/* compute_haar
- * Parameters: integral image, image
- * Compute the Haar features in the whole image by calling haar_features
- * Result: Array of array of Haar features
- */
-
-feature* compute_haar(Uint32 *int_img, SDL_Surface *img)
-{
-  feature *array_feat = calloc(img->w * img-> h, sizeof(feature));
- int size = 0;
- for (int y = 0; y < img->h; y++) {
-   for (int x = 0; x < img->w; x++) {
-     *(array_feat + size) = *haar_features(int_img, img, x,y);
-     size++;
-     printf("%d/%d\n",size,img->w*img->h);
-   }
- }
-
- return array_feat;
-}
-
 
 /* haar_features
  * Parameters: feature array, integral image, image, position x and y
@@ -178,18 +161,17 @@ feature* compute_haar(Uint32 *int_img, SDL_Surface *img)
  * Result: array of features
  */
 
-feature* haar_features(Uint32 *int_img, SDL_Surface *img, int x, int y)
+feature* haar_features(Uint32 *int_img, int w, int x, int y)
 {
   feature *array_feat = calloc(162336, sizeof(feature));
   feature *current = malloc(sizeof(feature));
   int index_array = 0;
-  index_array = haar_f1(int_img,img->w,array_feat,current,index_array,x,y);
-  index_array = haar_f2(int_img,img->w,array_feat,current,index_array,x,y);
-  index_array = haar_f3(int_img,img->w,array_feat,current,index_array,x,y);
-  index_array = haar_f4(int_img,img->w,array_feat,current,index_array,x,y);
-  index_array = haar_f5(int_img,img->w,array_feat,current,index_array,x,y);
+  index_array = haar_f1(int_img,w,array_feat,current,index_array,x,y);
+  index_array = haar_f2(int_img,w,array_feat,current,index_array,x,y);
+  index_array = haar_f3(int_img,w,array_feat,current,index_array,x,y);
+  index_array = haar_f4(int_img,w,array_feat,current,index_array,x,y);
+  index_array = haar_f5(int_img,w,array_feat,current,index_array,x,y);
   free(current);
-
   return array_feat;
 }
 

@@ -50,6 +50,10 @@ Uint32* image_integral (Uint32 *tab,size_t w,size_t h)
 Uint32 integral_region(Uint32 *int_img, size_t img_width, int up_left_X,
                 int up_left_Y, int down_right_X, int down_right_Y)
 {
+  down_right_X--;
+  down_right_Y--;
+  up_left_X--;
+  up_left_Y--;
   Uint32 up = *(int_img + down_right_X + up_left_Y * img_width);
   Uint32 left = *(int_img + up_left_X + down_right_Y * img_width);
   Uint32 up_left = *(int_img + up_left_X + up_left_Y * img_width);

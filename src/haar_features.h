@@ -24,8 +24,6 @@ typedef struct classifier{
 
 void build_feat(feature *feat, int type, int i, int j, int w, int h, int res);
 
-feature *compute_haar(Uint32 *int_img, SDL_Surface *img);
-
-feature* haar_features( Uint32 *int_img, SDL_Surface *img, int x, int y);
+feature* haar_features( Uint32 *int_img, int w, int x, int y);
 
 #endif /* !HAAR_FEATURES_H_ */

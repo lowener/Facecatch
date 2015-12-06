@@ -5,7 +5,7 @@
 //@params: nb_img (>0)
 feature** init_db(int nb_img, int pos_img, int neg_img, int* prob_weight_img)
 {
-  feature** database = calloc(nb_img*162336,sizeof(feature));
+  feature** database = calloc(nb_img,sizeof(feature));
   assert(database);
   int i = -3;
   const char *pos = "./pos/";
@@ -30,12 +30,12 @@ feature** init_db(int nb_img, int pos_img, int neg_img, int* prob_weight_img)
     grey(img, grey_img);
     Uint32* int_img = image_integral(grey_img, img->w, img->h);
 
-    *(database + i) = haar_features(int_img, img, 0, 0);
+    
+    *(database + i) = haar_features(int_img, img->w, 0, 0);
     SDL_FreeSurface(img);
     free(grey_img);
     free(int_img);
   }
-  printf("%d positive images loaded\n", i);
 
   for (int j = 0; j < pos_img; j++)  // INIT PROB_WEIGHT
       prob_weight_img[j] = 1;
@@ -63,13 +63,14 @@ feature** init_db(int nb_img, int pos_img, int neg_img, int* prob_weight_img)
     grey(img, grey_img);
     Uint32* int_img = image_integral(grey_img, img->w, img->h);
 
-    *(database + pos_img+i) = haar_features(int_img, img, 0, 0);
+    *(database + pos_img+i) = haar_features(int_img, img->w, 0, 0);
     SDL_FreeSurface(img);
     free(grey_img);
     free(int_img);
   }
+
+
   closedir(rep);
-  printf("%d negative images loaded\n", i);
   return database;
 }
 
