@@ -83,7 +83,7 @@ void save(struct list *l,char* path)
   l=l->next;
   for(;l;l = l->next)
     {
-      path = realloc(path,(strlen(path)+strlen(l->name))*sizeof(char));
+      //path = realloc(path,(strlen(path)+strlen(l->name))*sizeof(char));
       path=strcat(path,l->name);
       cur = fopen(path,"w+");
       if(cur)
@@ -117,7 +117,16 @@ struct list* load(char* path)
 	struct list* tmp = malloc(sizeof(struct list));
 	tmp->name = cur->d_name;
 	FILE* tmp1 = fopen(cur->d_name,"r");
-	fscanf(tmp1,"%zu/n",(&(tmp->len)));
+	fscanf(tmp1,"%zu\n",(&(tmp->len)));
+	fscanf(tmp1,"%s\n",tmp->path);
+	tmp->feat= malloc(tmp->len*sizeof(int));
+	for(size_t i =0; i<tmp->len;i++)
+	  {
+	    fscanf(tmp1,"%d\n",((tmp->feat)+i));
+	  }
+	tmp->next= NULL;
+	list_push_front(l,tmp);
+	  
       }
    
   return l; 
@@ -125,5 +134,16 @@ struct list* load(char* path)
 
 int main()
 {
-  load("../");
+  struct list* l = list_empty();
+  int myArray[10] = { 1,2,3,4,5};
+  for (size_t i = 0; i < 10;i++)
+    {
+
+      
+      struct list* tmp = build_elm("name",myArray,5,"dd/dd/dd");
+      list_push_front(l,tmp);
+    }
+  char path[100] =""; 
+  save(l,path);
+  //struct list*d= load("");
 }
