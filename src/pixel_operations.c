@@ -66,10 +66,9 @@ void Stretch_Nearest(SDL_Surface* src,SDL_Surface* dest)
     }
 }
 
-SDL_Surface *Strechblit(SDL_Surface* src)
+SDL_Surface *Stretchblit(SDL_Surface* src)
 {
-  SDL_Surface* img = SDL_CreateRGBSurface(SDL_SWSURFACE,24,24,32,0,\
-                                          0,0,0);
+  SDL_Surface* img = SDL_CreateRGBSurface(SDL_SWSURFACE,24,24,32,0,0,0,0);
   Stretch_Nearest(src,img);
   return img;
 }

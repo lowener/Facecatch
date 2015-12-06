@@ -9,7 +9,9 @@
 #include "training.h"
 #include "sdl_functions.h"
 #include "adab.h"
-#include "s4.h"
+//#include "s4.h"
+
+
 
 void write_adab(strong_classif *sc) {
 
@@ -29,9 +31,16 @@ void write_adab(strong_classif *sc) {
 
 }
 
-int main(/*int argc, char *argv[]*/)
+int main(int argc, char *argv[])
 {
-/*
+
+
+
+
+
+
+
+
   if (argc == 1)
   {
     printf("where is your image?\n");
@@ -40,16 +49,29 @@ int main(/*int argc, char *argv[]*/)
   SDL_Surface *my_img = load_image(argv[1]);
   if (!my_img)
     return 1;
-  display_image(my_img);
+    //display_image(my_img);
   //display_image((contrast_level(load_image(argv[1]))));
-  Uint32* grey_array = malloc(sizeof(Uint32)*my_img->w*my_img->h);
-  grey(my_img,grey_array);
+  //Uint32* grey_array = malloc(sizeof(Uint32)*my_img->w*my_img->h);
+  //grey(my_img,grey_array);
   //display_image(my_img);
   //print_u32t(grey_array,my_img->w,my_img->h);
-  draw_square(my_img, 40, 40, 50);
-  display_image(my_img);
+  //draw_square(my_img, 40, 40, 50);
+  //display_image(my_img);
+  
+  //detect_faces(my_img, 0, 0);
+  //display_image(my_img);
+  //detect_faces(my_img, 5, 5);
+  //display_image(my_img);
+
+
+  analyse_image(my_img);
+  printf("ALL DONE...\n");
+  SDL_FreeSurface(my_img);
+
+/*
+
   printf("ADABOOST !!\n");
-  */
+  
 
   int pos_img = 400;
   int neg_img = 512;
@@ -78,11 +100,11 @@ int main(/*int argc, char *argv[]*/)
     res = 0;
     for (int i = 0; i < sc->length; i++) {
       if (database[j][sc->w[i].d->index].res > sc->w[i].d->threshold)
-        res += -sc->w[i].coef;
+        res += sc->w[i].coef;
       else
-        res +=  sc->w[i].coef;
+        res += -sc->w[i].coef;
     }
-    if (res<0)
+    if (res>0)
     {
       printf("%3d. OUI res:%f\n",j,res);
       if(j < pos_img)
@@ -108,7 +130,7 @@ int main(/*int argc, char *argv[]*/)
     free(database[i]);
   }
   free(database);
-
+*/
   return 0;
 
 }

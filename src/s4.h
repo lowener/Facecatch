@@ -1,3 +1,8 @@
+#ifndef S4_H_
+#define S4_H_
+
+#include "adab.h"
+
 void load_classif(strong_classif* sc)
 {
   sc->length = 250;
@@ -1752,3 +1757,5 @@ void load_classif(strong_classif* sc)
   sc->w[249].d->threshold = -4940.000000;
   sc->w[249].d->error = 0.012491;
 }
+
+#endif

@@ -8,7 +8,7 @@ CFLAGS= -Wall -Wextra -Werror -std=c99 -O0 -pedantic -lm -g
 LDFLAGS=
 LDLIBS= `pkg-config --libs sdl` -lSDL_image -lm
 
-SRC= adab.c pixel_operations.c main.c integral_image.c haar_features.c training.c sdl_functions.c save.c
+SRC= adab.c pixel_operations.c main.c integral_image.c haar_features.c training.c sdl_functions.c save.c s4.h
 OBJ= ${SRC:.c=.o}
 
 all: main
