@@ -50,3 +50,26 @@ void putpixel(SDL_Surface *surface, unsigned x, unsigned y, Uint32 pixel) {
     break;
   }
 }
+
+void Stretch_Nearest(SDL_Surface* src,SDL_Surface* dest)
+{
+  int i,j;
+  double rx,ry;
+  rx = 24.0/(double)src->w;
+  ry = 24.0/(double)src->h;
+  for(i=0;i<24;i++)
+    for(j=0;j<24;j++)
+    {
+      Uint32 pix;
+      pix = getpixel(src,(int)(i/rx),(int)(j/ry));
+      putpixel(dest,i,j,pix);
+    }
+}
+
+SDL_Surface *Strechblit(SDL_Surface* src)
+{
+  SDL_Surface* img = SDL_CreateRGBSurface(SDL_SWSURFACE,24,24,32,0,\
+                                          0,0,0);
+  Stretch_Nearest(src,img);
+  return img;
+}
