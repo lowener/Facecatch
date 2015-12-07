@@ -9,6 +9,13 @@
 #include "s4.h"
 #include "integral_image.h"
 
+int max(int a,int b)
+{
+  if (a>b)
+    return a;
+  return b;
+}
+
 void wait_for_keypressed(void) {
   SDL_Event             event;
   // Infinite loop, waiting for event
@@ -209,7 +216,7 @@ Uint32* resize_selection(Uint32* old, int w, int h)
 
 
 
-void detect_faces(SDL_Surface *img, SDL_Surface* clone, strong_classif* sc, int x, int y, int e)
+selection* detect_faces(SDL_Surface *img, strong_classif* sc, int x, int y, int e)
 {
   Uint32* pixels = malloc(img->w*img->h*sizeof(Uint32));
   grey(img, pixels);
@@ -221,24 +228,24 @@ void detect_faces(SDL_Surface *img, SDL_Surface* clone, strong_classif* sc, int 
   //int e = 24;
 
   //Extracting Selection
-  Uint32* selection = malloc(e*e*sizeof(Uint32));
+  Uint32* select = malloc(e*e*sizeof(Uint32));
   for(int i = 0; i < e; i++)
   {
     for(int j = 0; j < e; j++)
     {
-      *(selection + i + e*j) = *(pixels + i + x + e*(j+y)); 
+      *(select + i + e*j) = *(pixels + i + x + e*(j+y)); 
     }
   }
 
   if (e>24)
   {
-    Uint32* tmp = selection;
-    selection = resize_selection(selection, e, e);
+    Uint32* tmp = select;
+    select = resize_selection(select, e, e);
     free(tmp);
   }
 
   feature* database; // = malloc(162336*sizeof(feature));
-  database = haar_features(selection, 24, 0, 0);
+  database = haar_features(select, 24, 0, 0);
   
   for(int f = 0; f < sc->length; f++)
   {
@@ -247,21 +254,32 @@ void detect_faces(SDL_Surface *img, SDL_Surface* clone, strong_classif* sc, int 
     else
       res += -sc->w[f].coef;
   }
-  
-  if(res >  0.3)
+ 
+  free(database);
+  free(select);
+  free(pixels);
+
+  selection* s;
+  if(res >  0)
   {
-    printf("res = %f\n", res);
-    draw_square(clone, x, y, e);
+    //printf("res = %f\n", res);
+    //draw_square(clone, x, y, e);
+    s = malloc(sizeof(selection));
+    s->res = res;
+    s->x = x;
+    s->y = y;
+    s->e = e;
+    return s;
   }
+  else
+    return NULL;
   //else
    // draw_red(clone, x, y, e);
 
 
     
   //SDL_FreeSurface(img_sel);
-  free(database);
-  free(selection);
-  free(pixels);
+
 }
 
 
@@ -274,18 +292,57 @@ void analyse_image(SDL_Surface* img, SDL_Surface* clone)
     sc->w[m].d = malloc(sizeof(decision));
   load_classif(sc);
 
-  int e = 370;
+  selection *best1 = malloc(sizeof(selection));
+  best1->res = 0;
+  selection *best2 = malloc(sizeof(selection));
+  best2->res = 0;
+  selection *best3 = malloc(sizeof(selection));
+  best3->res = 0;
+  //int e = 370;
+  
+  for(int e = min(img->h,img->w)*(4.0/5.0); e > min(img->h,img->w)*(2.0/5.0) ; e-= 35)
+  {
+  
   for(int y = 0; y < img->h - e; y+=5)
   {
     for(int x = 0; x < img->w - e; x+=5)
     {
-      detect_faces(img, clone, sc, x, y, e);
+      selection* s = detect_faces(img, sc, x, y, e);
+      if(!s)
+        continue;
+      if(s->res > best1->res)
+      {
+        free(best1);
+        best1 = s;
+      }
+      else if(s->res > best2->res)
+      {
+        free(best2);
+        best2 = s;
+      }
+      else if(s->res > best3->res)
+      {
+        free(best3);
+        best3 = s;
+      }
+      else
+        free(s);
+
       //display_image(img);
       //printf("Processing(%i,%i)\n",x,y);
     }
     //display_image(img);
   }
+  printf("Completed size : %i\n", e);
 
+  }
+  if(best1->res)
+    draw_square(clone, best1->x, best1->y, best1->e);
+  if(best2->res)
+    draw_square(clone, best2->x, best2->y, best2->e);
+  if(best3->res)
+    draw_square(clone, best3->x, best3->y, best3->e);
+    
   //detect_faces(img, sc, 50, 150, 300);
   display_image(clone);
   free(sc);
