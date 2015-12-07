@@ -3,12 +3,12 @@ CFLAGS= -Wall -Wextra  -std=c99 -pedantic -O3 -DNDEBUG
 LDFLAGS=
 LDLIBS= `pkg-config --libs sdl` -lSDL_image `pkg-config  --libs gtk+-2.0` -lm
 
-SRC= main1.c
+SRC= 
 OBJ= ${SRC:.c=.o}
  
-all: main
+all: main1
  
-main: ${OBJ}
+main1: ${OBJ}
  
 clean:
 	rm -f *~ *.o
