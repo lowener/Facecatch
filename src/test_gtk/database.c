@@ -158,9 +158,9 @@ int del(struct list *l,char*name)
 }
 
 
-/*
-int main()
-{
+
+//int main()
+//{
   //struct list* l = list_empty();
   //int myArray[10] = {1,2,3,4,5};
   // struct list* tmp = build_elm("name1",myArray,5,"dd/dd/dd");
@@ -171,15 +171,14 @@ int main()
   //add(l,"dd","g/h/j");  
   //char path[100] =""; 
   //save(l);
-  struct list*d= load();
+  //struct list*d= load();
   //printf("%s\n",l->next->name);
   /*while(d->next){
     printf("%s : %s\n",d->next->name, d->next->path);
     d = d->next;
     }*/
-  del(d,"dd");
+//del(d,"dd");
     //printf("%s\n",find_name(l,"name1")->next->name);
-  return 0;
-}
+//return 0;
+//}
 
-*/

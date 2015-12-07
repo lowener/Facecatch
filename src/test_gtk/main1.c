@@ -1,6 +1,8 @@
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <gtk/gtk.h>
+#include<string.h>
 //#include "database.h"
 //include francois
 
@@ -76,8 +78,8 @@ buttonq=gtk_button_new_with_label("Quit");
 //image =photo->image;
 
 bouton_explorer=gtk_button_new_with_mnemonic("_Delete and more");
-gtk_container_add(GTK_CONTAINER(window),bouton_explorer);
- gtk_container_add(GTK_CONTAINER(window),button2);
+//gtk_container_add(GTK_CONTAINER(window),bouton_explorer);
+//gtk_container_add(GTK_CONTAINER(window),button2);
 
 
 
@@ -169,7 +171,7 @@ void creer_file_selection_delete()
 
 
 
-void recuperer_chemin(GtkWidget *bouton,GtkWidget *file_selection)
+void recuperer_chemin_delete(GtkWidget *bouton,GtkWidget *file_selection)
 {
  
 
@@ -186,7 +188,7 @@ void recuperer_chemin(GtkWidget *bouton,GtkWidget *file_selection)
   				  GTK_BUTTONS_OK,
   				  "Vous avez choisi :\n%s", chemin);
   //add(/*list*/,chemin);
-  gtk_image_set_from_file(GTK_IMAGE(photo->image),chemin);
+  //gtk_image_set_from_file(GTK_IMAGE(photo->image),chemin);
   gtk_dialog_run(GTK_DIALOG(dialog));
   gtk_widget_destroy(dialog);
   gtk_widget_destroy(file_selection);
@@ -195,7 +197,7 @@ void recuperer_chemin(GtkWidget *bouton,GtkWidget *file_selection)
 }
 
 
-void recuperer_chemin_delete(GtkWidget *bouton,GtkWidget *file_selection)
+void recuperer_chemin(GtkWidget *bouton,GtkWidget *file_selection)
 {
 
 
@@ -203,16 +205,58 @@ void recuperer_chemin_delete(GtkWidget *bouton,GtkWidget *file_selection)
   bouton = bouton;
   const gchar* chemin;
   GtkWidget *dialog;
+  GtkWidget *pEntry;
+  const gchar *sNom;
 
   chemin = gtk_file_selection_get_filename(GTK_FILE_SELECTION (file_selection));
 
-  dialog = gtk_message_dialog_new(GTK_WINDOW(file_selection),
-                                  GTK_DIALOG_MODAL,
-                                  GTK_MESSAGE_INFO,
-                                  GTK_BUTTONS_OK,
-                                  "Vous avez choisi :\n%s", chemin);
-  //  add(/*list*/,chemin);
-  //gtk_image_set_from_file(GTK_IMAGE(photo->image),chemin);
+  dialog = gtk_dialog_new_with_buttons("Saisie du nom",
+				       GTK_WINDOW(file_selection),
+				       GTK_DIALOG_MODAL,
+				       GTK_STOCK_OK,GTK_RESPONSE_OK,
+				       GTK_STOCK_CANCEL,GTK_RESPONSE_CANCEL,
+				       NULL);
+ 
+  /* Création de la zone de saisie */
+  pEntry = gtk_entry_new();
+  gtk_entry_set_text(GTK_ENTRY(pEntry), "Saisissez votre nom");
+  gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), pEntry, TRUE, FALSE, 0);
+
+  /* Affichage des éléments de la boite de dialogue */
+  gtk_widget_show_all(GTK_DIALOG(dialog)->vbox);
+ 
+  /* On lance la boite de dialogue et on récupéré la réponse */
+  switch (gtk_dialog_run(GTK_DIALOG(dialog)))
+    {
+      /* L utilisateur valide */
+    case GTK_RESPONSE_OK:
+      sNom = gtk_entry_get_text(GTK_ENTRY(pEntry));
+      //gtk_label_set_text(GTK_LABEL(pLabel), sNom);
+      break;
+      /* L utilisateur annule */
+    case GTK_RESPONSE_CANCEL:
+    case GTK_RESPONSE_NONE:
+    default:
+      //gtk_label_set_text(GTK_LABEL(pLabel), "Vous n'avez rien saisi !");
+      sNom = "inconne";
+      break;
+    }
+
+  FILE* cur= NULL;
+  char buf[32]="";
+  strcpy(buf,"data/");
+  strcat(buf,(char*)sNom);
+  cur = fopen(buf,"w+");
+  if(cur)
+    {
+      fprintf(cur,"%s\n",(char*)chemin);
+      fclose(cur);
+    }
+  
+
+
+
+  gtk_image_set_from_file(GTK_IMAGE(photo->image),chemin);
   gtk_dialog_run(GTK_DIALOG(dialog));
   gtk_widget_destroy(dialog);
   gtk_widget_destroy(file_selection);
