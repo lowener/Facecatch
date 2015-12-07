@@ -11,7 +11,6 @@
 #include "pixel_operations.h"
 #include <err.h>
 #include "sdl_functions.h"
-#include "save.h"
 #include <dirent.h>
 
 feature** init_db(int nb_img, int pos_img, int neg_img, int* prob_weight_img);
