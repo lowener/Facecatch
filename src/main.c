@@ -46,9 +46,12 @@ int main(int argc, char *argv[])
     printf("where is your image?\n");
     return 1;
   }
-  SDL_Surface *my_img = load_image(argv[1]);
-  if (!my_img)
-    return 1;
+  facial_recognition(argv[1]);
+  //SDL_Surface *my_img = load_image(argv[1]);
+  //if (!my_img)
+    //return 1;
+
+  
     //display_image(my_img);
   //display_image((contrast_level(load_image(argv[1]))));
   //Uint32* grey_array = malloc(sizeof(Uint32)*my_img->w*my_img->h);
@@ -63,12 +66,12 @@ int main(int argc, char *argv[])
   //detect_faces(my_img, 5, 5);
   //display_image(my_img);
 
-
+/*
   analyse_image(my_img);
   printf("ALL DONE...\n");
   SDL_FreeSurface(my_img);
 
-/*
+
 
   printf("ADABOOST !!\n");
   

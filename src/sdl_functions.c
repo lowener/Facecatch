@@ -169,7 +169,47 @@ float my_abs(float x)
    return x;
  }
 
-void detect_faces(SDL_Surface *img, strong_classif* sc, int x, int y)
+
+SDL_Surface* create_SDL_Surface(Uint32* tab, int w, int h)
+{
+  SDL_Surface* img = SDL_CreateRGBSurface(SDL_SWSURFACE,w,h,32,0,0,0,0);
+ for(int y = 0; y < h; y++)
+ {
+    for(int x = 0; x < w; x++)
+    {
+      putpixel(img, x, y, *(tab + x + w*y));
+    }
+ }
+ return img;
+}
+
+Uint32* create_pixeltab(SDL_Surface* img)
+{
+  Uint32* tab = malloc(img->w*img->h*sizeof(Uint32));
+  for(int y = 0; y < img->h; y++)
+  {
+    for(int x = 0; x < img->w; x++)
+    {
+      *(tab + x + img->w*y) = getpixel(img, x, y);
+    }
+  }
+  return tab;
+}
+
+Uint32* resize_selection(Uint32* old, int w, int h)
+{
+  SDL_Surface* old_img = create_SDL_Surface(old, w, h);
+  SDL_Surface* new_img = Stretchblit(old_img);
+  Uint32* new = create_pixeltab(new_img);
+
+  SDL_FreeSurface(old_img);
+  SDL_FreeSurface(new_img);
+  return new;
+}
+
+
+
+void detect_faces(SDL_Surface *img, SDL_Surface* clone, strong_classif* sc, int x, int y, int e)
 {
   Uint32* pixels = malloc(img->w*img->h*sizeof(Uint32));
   grey(img, pixels);
@@ -178,16 +218,23 @@ void detect_faces(SDL_Surface *img, strong_classif* sc, int x, int y)
 
   //SDL_Surface* img_sel = SDL_CreateRGBSurface(SDL_SWSURFACE, 
     //                                          24,24,32,0,0,0,0);
-  int e = 24;
+  //int e = 24;
 
   //Extracting Selection
   Uint32* selection = malloc(e*e*sizeof(Uint32));
-  for(int i = 0; i < 24; i++)
+  for(int i = 0; i < e; i++)
   {
-    for(int j = 0; j < 24; j++)
+    for(int j = 0; j < e; j++)
     {
-      *(selection + i + 24*j) = *(pixels + i + x + 24*(j+y)); 
+      *(selection + i + e*j) = *(pixels + i + x + e*(j+y)); 
     }
+  }
+
+  if (e>24)
+  {
+    Uint32* tmp = selection;
+    selection = resize_selection(selection, e, e);
+    free(tmp);
   }
 
   feature* database; // = malloc(162336*sizeof(feature));
@@ -201,10 +248,13 @@ void detect_faces(SDL_Surface *img, strong_classif* sc, int x, int y)
       res += -sc->w[f].coef;
   }
   
-  if(res >  0)
-    draw_square(img, x, y, 24);
-  else
-    draw_red(img, x, y, 24);
+  if(res >  0.3)
+  {
+    printf("res = %f\n", res);
+    draw_square(clone, x, y, e);
+  }
+  //else
+   // draw_red(clone, x, y, e);
 
 
     
@@ -215,7 +265,7 @@ void detect_faces(SDL_Surface *img, strong_classif* sc, int x, int y)
 }
 
 
-void analyse_image(SDL_Surface* img)
+void analyse_image(SDL_Surface* img, SDL_Surface* clone)
 {
   //Loading Strong Classifier
   strong_classif* sc = malloc(sizeof(strong_classif));
@@ -224,16 +274,33 @@ void analyse_image(SDL_Surface* img)
     sc->w[m].d = malloc(sizeof(decision));
   load_classif(sc);
 
-
-  for(int y = 0; y < img->h - 24; y+=5)
+  int e = 370;
+  for(int y = 0; y < img->h - e; y+=5)
   {
-    for(int x = 0; x < img->w - 24; x+=5)
+    for(int x = 0; x < img->w - e; x+=5)
     {
-      detect_faces(img, sc, x, y);
+      detect_faces(img, clone, sc, x, y, e);
       //display_image(img);
       //printf("Processing(%i,%i)\n",x,y);
     }
+    //display_image(img);
   }
-  display_image(img);
+
+  //detect_faces(img, sc, 50, 150, 300);
+  display_image(clone);
   free(sc);
+}
+
+
+void facial_recognition(char* path)
+{
+  SDL_Surface* my_img = load_image(path);
+  SDL_Surface* clone = load_image(path);
+  if(!my_img || !clone)
+    return;
+  analyse_image(my_img, clone);
+
+  SDL_FreeSurface(my_img);
+  SDL_FreeSurface(clone);
+  printf("Recognition completed...\n");
 }
