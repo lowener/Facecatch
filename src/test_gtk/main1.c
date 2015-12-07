@@ -1,6 +1,8 @@
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <gtk/gtk.h>
+#include<string.h>
 //#include "database.h"
 //include francois
 
@@ -240,7 +242,17 @@ void recuperer_chemin(GtkWidget *bouton,GtkWidget *file_selection)
       break;
     }
 
-
+  FILE* cur= NULL;
+  char buf[32]="";
+  strcpy(buf,"data/");
+  strcat(buf,(char*)sNom);
+  cur = fopen(buf,"w+");
+  if(cur)
+    {
+      fprintf(cur,"%s\n",(char*)chemin);
+      fclose(cur);
+    }
+  
 
 
 

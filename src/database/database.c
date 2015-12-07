@@ -158,7 +158,7 @@ int del(struct list *l,char*name)
 }
 
 
-
+/*
 int main()
 {
   //struct list* l = list_empty();
@@ -182,3 +182,4 @@ int main()
   return 0;
 }
 
+*/
