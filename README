@@ -1,5 +1,4 @@
-This program is a work in progress.
-This is the current version for the 1st soutenance.
+This program allows you to detect a face on a picture.
 
 * To compile it you have to use
 make
@@ -10,6 +9,12 @@ make
 * To remove all the compiled files you have to use
 make clean
 
-This program loads 178 positive images of 24*24 pixels in order to train itself.
-It calculates the integral image, the haar features and makes the first strong
-classifier.
+Once executed, the program loads an interface. It will help you load images
+and add them to the database. Once added, the program will ask you the name
+of the person and will display the image. You then have to press any key to
+launch the analysis of the image. After a short period of time, the picture
+will refresh with the 3 most probable positions of a face in the picture.
+
+Thank you for using our program.
+
+A program made by 44lointain.

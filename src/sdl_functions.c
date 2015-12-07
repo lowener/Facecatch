@@ -285,6 +285,7 @@ selection* detect_faces(SDL_Surface *img, strong_classif* sc, int x, int y, int 
 
 void analyse_image(SDL_Surface* img, SDL_Surface* clone)
 {
+  display_image(img);
   //Loading Strong Classifier
   strong_classif* sc = malloc(sizeof(strong_classif));
   sc->w = malloc(250*sizeof(weak_classif));
@@ -333,9 +334,11 @@ void analyse_image(SDL_Surface* img, SDL_Surface* clone)
     }
     //display_image(img);
   }
-  printf("Completed size : %i\n", e);
+  printf("Analysing image : %i%%\n", 2*(int)(100 - ( e*100/((4.0/5.0)*min(img->w,img->h)))));
 
   }
+  printf("Analysing image : 100%%\n");
+
   if(best1->res)
     draw_square(clone, best1->x, best1->y, best1->e);
   if(best2->res)

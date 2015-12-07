@@ -264,7 +264,7 @@ void recuperer_chemin(GtkWidget *bouton,GtkWidget *file_selection)
       fclose(cur);
     }
   
-  facial_recognition(chemin);
+  facial_recognition((char*)chemin);
 
 
   gtk_image_set_from_file(GTK_IMAGE(photo->image),chemin);
