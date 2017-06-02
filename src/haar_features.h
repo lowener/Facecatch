@@ -26,4 +26,7 @@ void build_feat(feature *feat, int type, int i, int j, int w, int h, int res);
 
 feature* haar_features( Uint32 *int_img, int w, int x, int y);
 
+#include "adab.h"
+feature* classif_features(Uint32 *int_img, int w, int x, int y,
+                          strong_classif* sc);
 #endif /* !HAAR_FEATURES_H_ */

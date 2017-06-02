@@ -3,11 +3,10 @@
 #include <SDL/SDL.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include "haar_features.h"
-
 
 typedef struct decision {
     int toggle, margin,index;
+    int i,j,h,w,type;
     double threshold,error;
 } decision;
 
@@ -20,6 +19,10 @@ typedef struct strong_classif {
     weak_classif *w; //vector
     int length;
 } strong_classif;
+
+#include "haar_features.h"
+
+
 
 
 feature *sorting(feature **database, int index, int nbimg );

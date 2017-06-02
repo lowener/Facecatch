@@ -7,6 +7,7 @@
 #include "sdl_functions.h"
 #include "adab.h"
 #include "s4.h"
+#include "s5.h"
 #include "integral_image.h"
 
 int max(int a,int b)
@@ -68,9 +69,6 @@ SDL_Surface* display_image(SDL_Surface *img) {
 
    // Update the screen
   SDL_UpdateRect(screen, 0, 0, img->w, img->h);
-
-   // wait for a key
-  wait_for_keypressed();
 
    // return the screen for further uses
   return screen;
@@ -214,9 +212,8 @@ Uint32* resize_selection(Uint32* old, int w, int h)
   return new;
 }
 
-
-
-selection* detect_faces(SDL_Surface *img, strong_classif* sc, int x, int y, int e)
+selection* detect_faces(SDL_Surface *img, strong_classif* sc,
+                        int x, int y, int e)
 {
   Uint32* pixels = malloc(img->w*img->h*sizeof(Uint32));
   grey(img, pixels);
@@ -245,16 +242,17 @@ selection* detect_faces(SDL_Surface *img, strong_classif* sc, int x, int y, int 
   }
 
   feature* database; // = malloc(162336*sizeof(feature));
-  database = haar_features(select, 24, 0, 0);
-  
+//  database = haar_features(select, 24, 0, 0);
+  database = classif_features(select, 24, 0, 0, sc);
+
   for(int f = 0; f < sc->length; f++)
   {
-    if(database[sc->w[f].d->index].res > sc->w[f].d->threshold)
+    if(database[f].res > sc->w[f].d->threshold)
       res += sc->w[f].coef;
     else
       res += -sc->w[f].coef;
   }
- 
+
   free(database);
   free(select);
   free(pixels);
@@ -277,7 +275,7 @@ selection* detect_faces(SDL_Surface *img, strong_classif* sc, int x, int y, int 
    // draw_red(clone, x, y, e);
 
 
-    
+
   //SDL_FreeSurface(img_sel);
 
 }
@@ -292,6 +290,7 @@ void analyse_image(SDL_Surface* img, SDL_Surface* clone)
   for(int m = 0; m < 250; m++)
     sc->w[m].d = malloc(sizeof(decision));
   load_classif(sc);
+  load_haar(sc);
 
   selection *best1 = malloc(sizeof(selection));
   best1->res = 0;
@@ -299,53 +298,51 @@ void analyse_image(SDL_Surface* img, SDL_Surface* clone)
   best2->res = 0;
   selection *best3 = malloc(sizeof(selection));
   best3->res = 0;
-  //int e = 370;
-  
+
   for(int e = min(img->h,img->w)*(4.0/5.0); e > min(img->h,img->w)*(2.0/5.0) ; e-= 35)
   {
-  
-  for(int y = 0; y < img->h - e; y+=5)
-  {
-    for(int x = 0; x < img->w - e; x+=5)
-    {
-      selection* s = detect_faces(img, sc, x, y, e);
-      if(!s)
-        continue;
-      if(s->res > best1->res)
-      {
-        free(best1);
-        best1 = s;
-      }
-      else if(s->res > best2->res)
-      {
-        free(best2);
-        best2 = s;
-      }
-      else if(s->res > best3->res)
-      {
-        free(best3);
-        best3 = s;
-      }
-      else
-        free(s);
+     for(int y = 0; y < img->h - e; y+=5)
+     {
+        for(int x = 0; x < img->w - e; x+=5)
+        {
+           selection* s = detect_faces(img, sc, x, y, e);
+           if(!s)
+              continue;
+           if(s->res > best1->res)
+           {
+              free(best1);
+              best1 = s;
+           }
+           else if(s->res > best2->res)
+           {
+              free(best2);
+              best2 = s;
+           }
+           else if(s->res > best3->res)
+           {
+              free(best3);
+              best3 = s;
+           }
+           else
+              free(s);
 
-      //display_image(img);
-      //printf("Processing(%i,%i)\n",x,y);
-    }
-    //display_image(img);
-  }
-  printf("Analysing image : %i%%\n", 2*(int)(100 - ( e*100/((4.0/5.0)*min(img->w,img->h)))));
+           //display_image(img);
+           //printf("Processing(%i,%i)\n",x,y);
+        }
+        //display_image(img);
+     }
+     printf("Analysing image : %i%%\n", 2*(int)(100 - ( e*100/((4.0/5.0)*min(img->w,img->h)))));
 
   }
   printf("Analysing image : 100%%\n");
 
   if(best1->res)
-    draw_square(clone, best1->x, best1->y, best1->e);
+     draw_square(clone, best1->x, best1->y, best1->e);
   if(best2->res)
-    draw_square(clone, best2->x, best2->y, best2->e);
+     draw_square(clone, best2->x, best2->y, best2->e);
   if(best3->res)
-    draw_square(clone, best3->x, best3->y, best3->e);
-    
+     draw_square(clone, best3->x, best3->y, best3->e);
+
   //detect_faces(img, sc, 50, 150, 300);
   display_image(clone);
   free(sc);

@@ -11,7 +11,6 @@
  */
 
 
-
 void build_feat(feature *feat, int type, int i, int j, int w, int h, int res)
 {
   static int index = 0;
@@ -175,120 +174,99 @@ feature* haar_features(Uint32 *int_img, int w, int x, int y)
   return array_feat;
 }
 
-
-/*
-int near(float x)
+void f1(Uint32 *int_img, size_t width, feature *array_feat,
+        feature *current, int index_array, int x, int y,
+        int i, int j, int h, int w)
 {
-  int a = floor(x);
-  if (a - x > 0.5)
-    a++;
-  return a;
+  Uint32 S1 = integral_region(int_img, width,
+                              x+i, y+j,   x+i+h-1, y+j+w-1);
+  Uint32 S2 = integral_region(int_img, width,
+                              x+i, y+j+w, x+i+h-1, y+j+w*2-1);
+  build_feat(current,1,i,j,w,h,S1-S2);
+  *(array_feat + index_array) = *current;
 }
-*/
-/* scaling
- *Input: intregral image, e*e image (e>=24), Haar like feature
- *Compute a feature scaled to the image
- *Output: A Haar-like feature with all the good values
- */
 
-/*
-void scaling(Uint32 *int_img, SDL_Surface *img, feature *arr)
+void f2(Uint32 *int_img, size_t width, feature *array_feat,
+        feature *current, int index_array, int x, int y,
+        int i, int j, int h, int w)
 {
-  int e = img->w;
+  Uint32 S1 = integral_region(int_img, width,
+                              x+i, y+j,   x+i+h-1, y+j+w-1);
+  Uint32 S2 = integral_region(int_img, width,
+                              x+i, y+j+w, x+i+h-1, y+j+w*2-1);
+  Uint32 S3 = integral_region(int_img, width,
+                              x+i, y+j+w*2, x+i+h-1, y+j+w*3-1);
+  build_feat(current,2,i,j,w,h,S1-S2+S3);
+  *(array_feat + index_array) = *current;
 
-  if (arr -> type == 1)
-  {
-    arr->type = 2*arr->w*arr->h;
-    arr->i = near(arr->i * e / 24);
-    arr->j = near(arr->j * e / 24);
-    arr->h = near(arr->h * e / 24);
-    int k = 0;
-    while (k <= near(1+2*arr->w*e/24) && 2*k <= e-arr->j+1)
-      k++;
-    arr->w = k;
-    Uint32 S1 = integral_region(int_img, e, arr->i,arr->j,
-                                arr->i+arr->h-1,arr->w-1);
-    Uint32 S2 = integral_region(int_img, e, arr->i, arr->j+arr->w,
-                                arr->i+arr->h-1,arr->j+arr->w*2-1);
-    arr->res = (S1 - S2)*arr->type / (2*arr->w*arr->h);
-  }
-  else if (arr -> type == 2)
-  {
-    arr->type = 3*arr->w*arr->h;
-    arr->i = near(arr->i * e / 24);
-    arr->j = near(arr->j * e / 24);
-    arr->h = near(arr->h * e / 24);
-    int k = 0;
-    while (k <= near(1+3*arr->w*e/24) && 3*k <= e-arr->j+1)
-      k++;
-    arr->w = k;
-    Uint32 S1 = integral_region(int_img, e, arr->i,arr->j,
-                                arr->i+arr->h-1,arr->w-1);
-    Uint32 S2 = integral_region(int_img, e, arr->i, arr->j+arr->w,
-                                arr->i+arr->h-1,arr->j+arr->w*2-1);
-    Uint32 S3 = integral_region(int_img, e, arr->i,arr->j+2*arr->w,
-                                arr->i+arr->h-1,arr->j+arr->w*3-1);
-    arr->res = (S1 - S2 + S3)*arr->type / (3*arr->w*arr->h);
-  }
-  else if (arr -> type == 3)
-  {
-    arr->type = 2*arr->w*arr->h;
-    arr->i = near(arr->i * e / 24);
-    arr->j = near(arr->j * e / 24);
-    arr->w = near(arr->w * e / 24);
-    int k = 0;
-    while (k <= near(1+2*arr->h*e/24) && 2*k <= e-arr->i+1)
-      k++;
-    arr->h = k;
-    Uint32 S1 = integral_region(int_img, e, arr->i,arr->j,
-                                arr->i+arr->h-1,arr->j + arr->w-1);
-    Uint32 S2 = integral_region(int_img, e, arr->i+arr->h, arr->j,
-                                arr->i+arr->h*2-1,arr->j+arr->w-1);
-    arr->res = (S1 - S2)*arr->type / (2*arr->w*arr->h);
-  }
-  else if (arr -> type == 4)
-  {
-    arr->type = 3*arr->w*arr->h;
-    arr->i = near(arr->i * e / 24);
-    arr->j = near(arr->j * e / 24);
-    arr->w = near(arr->w * e / 24);
-    int k = 0;
-    while (k <= near(1+3*arr->h*e/24) && 3*k <= e-arr->i-1)
-      k++;
-    arr->h = k;
-    Uint32 S1 = integral_region(int_img, e, arr->i,arr->j,
-                                arr->i+arr->h-1,arr->j+arr->w-1);
-    Uint32 S2 = integral_region(int_img, e, arr->i+arr->h,arr->j,
-                                arr->i+2*arr->h-1,arr->j+arr->w-1);
-    Uint32 S3 = integral_region(int_img, e, arr->i+arr->h*2,arr->j,
-                                arr->i+3*arr->h-1,arr->j+arr->w-1);
-    arr->res = (S1 - S2 + S3)*arr->type / (3*arr->w*arr->h);
-  }
-  else if (arr -> type == 5)
-  {
-    arr->type = 4*arr->w*arr->h;
-    arr->i = near(arr->i * e / 24);
-    arr->j = near(arr->j * e / 24);
-    int k = 0;
-    while (k <= near(1+2*arr->w*e/24) && 2*k <= e-arr->j+1)
-      k++;
-    arr->w = k;
-    k = 0;
-    while (k <= near(1+2*arr->h*e/24) && 2*k <= e-arr->j+1)
-      k++;
-    arr->h = k;
-    Uint32 S1 = integral_region(int_img, e, arr->i,arr->j,
-                                arr->i+arr->h-1,arr->w-1+arr->j);
-
-    Uint32 S2 = integral_region(int_img, e, arr->i+arr->h,arr->j,
-                                arr->i+arr->h*2-1,arr->w-1+arr->j);
-
-    Uint32 S3 = integral_region(int_img, e, arr->i,arr->j + arr->w,
-                                arr->i+arr->h-1,arr->w*2-1+arr->j);
-
-    Uint32 S4 = integral_region(int_img, e, arr->i+arr->h,arr->j+arr->w,
-                                arr->i+arr->h*2-1,arr->w*2-1+arr->j);
-    arr->res = (S1 - S2-S3+S4)*arr->type / (4*arr->w*arr->h);
-  }
 }
-*/
+
+void f3(Uint32 *int_img, size_t width, feature *array_feat,
+        feature *current, int index_array, int x, int y,
+        int i, int j, int h, int w)
+{
+  Uint32 S1 = integral_region(int_img, width,
+                              x+i, y+j,   x+i+h-1, y+j+w-1);
+  Uint32 S2 = integral_region(int_img, width,
+                              x+i+h, y+j, x+i+2*h-1, y+j+w-1);
+  build_feat(current,3,i,j,w,h,S1-S2);
+  *(array_feat + index_array) = *current;
+
+}
+void f4(Uint32 *int_img, size_t width, feature *array_feat,
+        feature *current, int index_array, int x, int y,
+        int i, int j, int h, int w)
+{
+  Uint32 S1 = integral_region(int_img, width,
+                              x+i,     y+j, x+i+h-1,   y+j+w-1);
+  Uint32 S2 = integral_region(int_img, width,
+                              x+i+h,   y+j, x+i+2*h-1, y+j+w-1);
+  Uint32 S3 = integral_region(int_img, width,
+                              x+i+2*h, y+j, x+i+3*h-1, y+j+w-1);
+  build_feat(current,4,i,j,w,h,S1-S2+S3);
+  *(array_feat + index_array) = *current;
+
+}
+
+void f5(Uint32 *int_img, size_t width, feature *array_feat,
+        feature *current, int index_array, int x, int y,
+        int i, int j, int h, int w)
+{
+  Uint32 S1 = integral_region(int_img, width,
+                              x+i,     y+j,   x+i+h-1,   y+j+w-1);
+  Uint32 S2 = integral_region(int_img, width,
+                              x+i+h,   y+j,   x+i+2*h-1, y+j+w-1);
+  Uint32 S3 = integral_region(int_img, width,
+                              x+i,     y+j,   x+i+h-1,   y+j+2*w-1);
+  Uint32 S4 = integral_region(int_img, width,
+                              x+i+h,   y+j+w, x+i+2*h-1, y+j+2*w-1);
+  build_feat(current,5,i,j,w,h,S1-S2-S3+S4);
+  *(array_feat + index_array) = *current;
+
+}
+
+feature* classif_features(Uint32 *int_img, int w, int x, int y, strong_classif*sc)
+{
+  feature *array_feat = calloc(250, sizeof(feature));
+  feature *current = malloc(sizeof(feature));
+  for(int a = 0; a < 250 ; a++)
+  {
+    if (sc->w[a].d->type == 1)
+      f1(int_img,w,array_feat,current,a,x,y,sc->w[a].d->i,
+         sc->w[a].d->j, sc->w[a].d->h, sc->w[a].d->w);
+    else if (sc->w[a].d->type == 2)
+      f2(int_img,w,array_feat,current,a,x,y,sc->w[a].d->i,
+         sc->w[a].d->j, sc->w[a].d->h, sc->w[a].d->w);
+    else if (sc->w[a].d->type == 3)
+      f3(int_img,w,array_feat,current,a,x,y,sc->w[a].d->i,
+         sc->w[a].d->j, sc->w[a].d->h, sc->w[a].d->w);
+    else if (sc->w[a].d->type == 4)
+      f4(int_img,w,array_feat,current,a,x,y,sc->w[a].d->i,
+         sc->w[a].d->j, sc->w[a].d->h, sc->w[a].d->w);
+    else if (sc->w[a].d->type == 5)
+      f5(int_img,w,array_feat,current,a,x,y,sc->w[a].d->i,
+         sc->w[a].d->j, sc->w[a].d->h, sc->w[a].d->w);
+  }
+  free(current);
+  return array_feat;
+}
