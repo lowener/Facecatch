@@ -1,6 +1,7 @@
 # Facecatch
 
 This program allows you to detect a face on a picture.
+[Viola And Jones original paper](https://www.cs.cmu.edu/~efros/courses/LBMV07/Papers/viola-cvpr-01.pdf)
 
 ## Getting Started
 
